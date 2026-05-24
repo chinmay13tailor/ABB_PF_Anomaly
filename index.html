@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Low Power Factor Analysis Report</title>
+<title>PF Analysis</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 
@@ -16,13 +15,14 @@
 }
 
 body{
-  font-family:'Segoe UI',sans-serif;
-  background:#f3f4f6;
   margin:0;
-  color:#333;
-  width:100%;
-  overflow-x:hidden;
+  padding:0;
+  background:#f3f4f7;
+  font-family:'Segoe UI',sans-serif;
+  color:#1f2937;
 }
+
+/* MAIN */
 
 .page{
   width:100%;
@@ -44,9 +44,9 @@ body{
 
   padding:12px 16px;
 
-  border-radius:12px;
+  border-radius:10px;
 
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  border:1px solid #e5e7eb;
 
   margin-bottom:10px;
 }
@@ -54,45 +54,47 @@ body{
 .filter-item{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
 }
 
 .filter-item label{
-  font-size:14px;
-  color:#666;
+  font-size:13px;
+  color:#6b7280;
   font-weight:600;
 }
 
 input[type="date"]{
 
-  padding:10px 12px;
+  padding:8px 12px;
 
-  border:1px solid #d0d7de;
+  border:1px solid #d1d5db;
 
   border-radius:8px;
 
-  font-size:14px;
-
   background:#fff;
+
+  font-size:14px;
 }
 
 button{
-
-  padding:10px 18px;
 
   border:none;
 
   border-radius:8px;
 
-  font-size:14px;
-
-  font-weight:600;
+  padding:10px 18px;
 
   cursor:pointer;
+
+  font-size:14px;
+
+  font-weight:700;
 }
 
 .primary{
+
   background:#0b5ed7;
+
   color:#fff;
 }
 
@@ -101,50 +103,9 @@ button{
 }
 
 .status{
+  margin-left:auto;
+  color:#6b7280;
   font-size:13px;
-  color:#777;
-}
-
-/* MAIN CONTAINER */
-
-.report-box{
-
-  width:100%;
-
-  background:#fff;
-
-  border-radius:12px;
-
-  padding:8px;
-
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-/* HEADER */
-
-.header{
-
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  flex-wrap:wrap;
-
-  gap:12px;
-
-  padding:12px;
-
-  border-bottom:1px solid #e5e7eb;
-}
-
-.company{
-  font-size:22px;
-  font-weight:700;
-}
-
-.meta{
-  color:#555;
-  font-size:14px;
-  line-height:1.8;
 }
 
 /* KPI SECTION */
@@ -159,40 +120,119 @@ button{
 
   gap:12px;
 
-  margin-top:12px;
+  margin-bottom:12px;
 }
 
-.kpi{
+.kpi-card{
 
-  background:#fff;
+  position:relative;
 
-  border-radius:12px;
+  background:#ffffff;
 
-  padding:18px;
+  border-radius:10px;
 
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  border:1px solid #dfe3e8;
 
-  min-height:120px;
+  padding:14px 18px;
+
+  min-height:115px;
+
+  overflow:hidden;
 }
 
-.kpi .title{
-  color:#666;
-  font-size:14px;
+.kpi-card::before{
+
+  content:"";
+
+  position:absolute;
+
+  left:0;
+  top:0;
+
+  width:4px;
+  height:100%;
+
+  background:#10b981;
+}
+
+.kpi-card.orange::before{
+  background:#f59e0b;
+}
+
+.kpi-card.red::before{
+  background:#ef4444;
+}
+
+.kpi-title{
+
+  font-size:11px;
+
+  letter-spacing:2px;
+
+  color:#94a3b8;
+
+  font-weight:700;
+
+  text-transform:uppercase;
+
   margin-bottom:10px;
 }
 
-.kpi .value{
-  font-size:32px;
+.kpi-value{
+
+  font-size:52px;
+
+  line-height:1;
+
   font-weight:800;
+
+  color:#0f172a;
 }
 
-.kpi .sub{
-  color:#666;
-  margin-top:6px;
+.kpi-unit{
+
+  font-size:18px;
+
+  color:#94a3b8;
+
+  font-weight:600;
+
+  margin-left:4px;
 }
 
-.kpi.danger{
-  background:#ffe5e5;
+.kpi-footer{
+
+  margin-top:12px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  flex-wrap:wrap;
+}
+
+.badge{
+
+  background:#dcfce7;
+
+  color:#15803d;
+
+  font-size:11px;
+
+  padding:5px 10px;
+
+  border-radius:6px;
+
+  font-weight:700;
+}
+
+.footer-text{
+
+  color:#94a3b8;
+
+  font-size:12px;
 }
 
 /* PANELS */
@@ -201,33 +241,31 @@ button{
 
   width:100%;
 
-  background:#fff;
+  background:#ffffff;
 
-  border-radius:12px;
+  border-radius:10px;
+
+  border:1px solid #e5e7eb;
 
   padding:14px;
 
-  margin-top:12px;
-
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  margin-bottom:12px;
 }
 
 .panel h3{
-  margin:0 0 12px;
-  font-size:18px;
-}
 
-.grid2{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:12px;
+  margin:0 0 12px;
+
+  font-size:18px;
+
+  color:#111827;
 }
 
 /* TABLE */
 
 .table-wrap{
   width:100%;
-  overflow-x:auto;
+  overflow:auto;
 }
 
 table{
@@ -235,33 +273,32 @@ table{
   border-collapse:collapse;
 }
 
-th,td{
+thead th{
+
+  background:#f8fafc;
+
+  color:#334155;
 
   padding:12px;
 
-  border-bottom:1px solid #ececec;
+  font-size:13px;
 
-  text-align:center;
+  border-bottom:1px solid #e5e7eb;
 }
 
-thead th{
+tbody td{
 
-  background:#ffd54f;
+  padding:12px;
 
-  color:#222;
+  text-align:center;
 
-  font-weight:700;
+  border-bottom:1px solid #edf2f7;
+
+  font-size:13px;
 }
 
 tbody tr:nth-child(even){
   background:#fafafa;
-}
-
-/* CHARTS */
-
-#pfTrend,
-#pfScatter{
-  width:100% !important;
 }
 
 /* RESPONSIVE */
@@ -283,6 +320,10 @@ tbody tr:nth-child(even){
     flex-direction:column;
     align-items:flex-start;
   }
+
+  .status{
+    margin-left:0;
+  }
 }
 
 </style>
@@ -292,13 +333,16 @@ tbody tr:nth-child(even){
 
 <div class="page">
 
-  <!-- FILTER BAR -->
+  <!-- FILTER -->
 
   <div class="filter-row">
 
     <div class="filter-item">
-      <label>Date</label>
+
+      <label>🟢 Date</label>
+
       <input type="date" id="dateInput">
+
     </div>
 
     <button class="primary" id="btnGenerate">
@@ -306,100 +350,64 @@ tbody tr:nth-child(even){
     </button>
 
     <button class="primary" id="btnExport">
-      Export PDF
+      ⬇ Export
     </button>
 
-    <span class="status" id="status">
-      Idle
-    </span>
+    <div class="status" id="status">
+      Waiting...
+    </div>
 
   </div>
 
-  <!-- REPORT -->
+  <!-- KPI -->
 
-  <div class="report-box">
+  <div class="summary-row">
 
-    <!-- HEADER -->
+    <!-- AVG PF -->
 
-    <div class="header">
+    <div class="kpi-card">
+
+      <div class="kpi-title">
+        Average PF
+      </div>
 
       <div>
-        <div class="company">
-          PlantWiz PF Analysis Report
-        </div>
-
-        <div>
-          Chiller Plant Analysis Dashboard
-        </div>
+        <span class="kpi-value" id="kpiAvgPF">0.00</span>
       </div>
 
-      <div class="meta">
+      <div class="kpi-footer">
 
-        <div>
-          <b>Device:</b>
-          <span id="deviceShown"></span>
+        <div class="badge">
+          ✔ NORMAL
         </div>
 
-        <div>
-          <b>Generated:</b>
-          <span id="generatedAt"></span>
+        <div class="footer-text">
+          target 0.95 / ideal 1.0
         </div>
 
       </div>
 
     </div>
 
-    <!-- KPI -->
+    <!-- MIN PF -->
 
-    <div class="summary-row">
+    <div class="kpi-card orange">
 
-      <div class="kpi">
-
-        <div class="title">
-          Avg PF
-        </div>
-
-        <div class="value" id="kpiAvgPF">
-          --
-        </div>
-
+      <div class="kpi-title">
+        Minimum PF
       </div>
 
-      <div class="kpi">
-
-        <div class="title">
-          Min PF
-        </div>
-
-        <div class="value" id="kpiMinPF">
-          --
-        </div>
-
-        <div class="sub" id="kpiMinPFTs">
-          --
-        </div>
-
+      <div>
+        <span class="kpi-value" id="kpiMinPF">0.00</span>
       </div>
 
-      <div class="kpi">
+      <div class="kpi-footer">
 
-        <div class="title">
-          Duration PF &lt; 0.90
+        <div class="badge">
+          ⚠ LOW
         </div>
 
-        <div class="value" id="kpiDurationLowPF">
-          --
-        </div>
-
-      </div>
-
-      <div class="kpi danger">
-
-        <div class="title">
-          Estimated Penalty
-        </div>
-
-        <div class="value" id="kpiPenalty">
+        <div class="footer-text" id="kpiMinPFTs">
           --
         </div>
 
@@ -407,69 +415,122 @@ tbody tr:nth-child(even){
 
     </div>
 
-    <!-- TREND -->
+    <!-- DURATION -->
 
-    <div class="panel">
+    <div class="kpi-card">
 
-      <h3>
-        PF Trend With Active Power
-      </h3>
+      <div class="kpi-title">
+        Low PF Duration
+      </div>
 
-      <div id="pfTrend" style="height:420px;"></div>
+      <div>
+        <span class="kpi-value" id="kpiDurationLowPF">0</span>
+        <span class="kpi-unit">Min</span>
+      </div>
 
-    </div>
+      <div class="kpi-footer">
 
-    <!-- SCATTER -->
+        <div class="badge">
+          ✔ TRACKED
+        </div>
 
-    <div class="panel">
-
-      <h3>
-        PF vs Active Power
-      </h3>
-
-      <div id="pfScatter" style="height:420px;"></div>
-
-    </div>
-
-    <!-- EVENTS -->
-
-    <div class="panel">
-
-      <h3>
-        Low PF Events
-      </h3>
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-
-              <th>Start</th>
-              <th>End</th>
-              <th>Min PF</th>
-              <th>kW @ Min PF</th>
-              <th>Duration (Min)</th>
-
-            </tr>
-
-          </thead>
-
-          <tbody id="eventsBody">
-
-            <tr>
-              <td colspan="5">
-                Click Analyze
-              </td>
-            </tr>
-
-          </tbody>
-
-        </table>
+        <div class="footer-text">
+          PF below 0.90
+        </div>
 
       </div>
+
+    </div>
+
+    <!-- PENALTY -->
+
+    <div class="kpi-card red">
+
+      <div class="kpi-title">
+        Estimated Penalty
+      </div>
+
+      <div>
+        <span class="kpi-value" id="kpiPenalty">0</span>
+      </div>
+
+      <div class="kpi-footer">
+
+        <div class="badge">
+          ₹ COST
+        </div>
+
+        <div class="footer-text">
+          estimated utility loss
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- TREND -->
+
+  <div class="panel">
+
+    <h3>
+      PF Trend With Active Power
+    </h3>
+
+    <div id="pfTrend" style="height:430px;"></div>
+
+  </div>
+
+  <!-- SCATTER -->
+
+  <div class="panel">
+
+    <h3>
+      PF vs Active Power
+    </h3>
+
+    <div id="pfScatter" style="height:430px;"></div>
+
+  </div>
+
+  <!-- TABLE -->
+
+  <div class="panel">
+
+    <h3>
+      Low PF Events
+    </h3>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Start</th>
+            <th>End</th>
+            <th>Min PF</th>
+            <th>kW @ Min PF</th>
+            <th>Duration (Min)</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="eventsBody">
+
+          <tr>
+            <td colspan="5">
+              No Data
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
 
     </div>
 
@@ -483,42 +544,23 @@ const CONFIG = {
 
   API_BASE_URL:"https://plantwiz.pimateck.in/api",
 
-  LOW_PF_THRESHOLD:0.90,
+  DEVICE_ID:"1250b550-5bdb-11f0-9b14-15d3b3a473c1",
 
-  PF_TARGET:0.95,
-
-  DEMAND_RATE_INR_PER_KVA:350,
-
-  DEVICE_ID:"1250b550-5bdb-11f0-9b14-15d3b3a473c1"
+  LOW_PF_THRESHOLD:0.90
 };
 
 const TOKEN =
 new URLSearchParams(window.location.search).get("token");
 
-document.getElementById("deviceShown").innerText =
-CONFIG.DEVICE_ID;
-
-document.getElementById("generatedAt").innerText =
-new Date().toLocaleString();
-
-const today = new Date();
-
 document.getElementById("dateInput").value =
-today.toISOString().split('T')[0];
+new Date().toISOString().split('T')[0];
 
 document.getElementById("btnGenerate")
 .addEventListener("click",generate);
 
-function fmtTs(ts){
+function fmt(ts){
 
   return new Date(ts).toLocaleString();
-}
-
-function num(v){
-
-  const n = Number(v);
-
-  return Number.isFinite(n) ? n : NaN;
 }
 
 async function fetchTelemetry(startTs,endTs){
@@ -533,92 +575,49 @@ async function fetchTelemetry(startTs,endTs){
     }
   });
 
-  return res.json();
+  return await res.json();
 }
 
 function mergeSeries(obj){
 
-  const map = new Map();
+  const rows = [];
 
-  Object.entries(obj).forEach(([k,arr])=>{
+  if(obj.chiller_plant_1){
 
-    (arr || []).forEach(p=>{
+    obj.chiller_plant_1.forEach(item=>{
 
-      const t = +p.ts;
+      try{
 
-      const row =
-      map.get(t) || {ts:t};
+        const data = JSON.parse(item.value);
 
-      row[k] = p.value;
+        rows.push({
 
-      map.set(t,row);
+          ts:item.ts,
+
+          PF:Number(data["18_Avg_PF"]),
+
+          kW:Number(data["18_Act_Power_Total"]),
+
+          kWh:Number(data["18_Act_Energy_Total"])
+        });
+
+      }catch(e){}
     });
-  });
+  }
 
-  return Array
-  .from(map.values())
-  .sort((a,b)=>a.ts-b.ts);
-}
-
-function detectLowPFEvents(rows){
-
-  const events = [];
-
-  let cur = null;
-
-  rows.forEach((r,i)=>{
-
-    const low =
-    r.PF < CONFIG.LOW_PF_THRESHOLD;
-
-    if(low && !cur){
-
-      cur = {
-
-        start:r.ts,
-
-        minPF:r.PF,
-
-        kw:r.kW
-      };
-    }
-
-    if(low && cur && r.PF < cur.minPF){
-
-      cur.minPF = r.PF;
-
-      cur.kw = r.kW;
-    }
-
-    if(!low && cur){
-
-      cur.end = rows[i-1]?.ts || r.ts;
-
-      cur.duration =
-      Math.round(
-        (cur.end - cur.start)/60000
-      );
-
-      events.push(cur);
-
-      cur = null;
-    }
-  });
-
-  return events;
+  return rows.sort((a,b)=>a.ts-b.ts);
 }
 
 function renderKPIs(rows,events){
 
-  const pfValues =
-  rows.map(r=>r.PF).filter(v=>!isNaN(v));
+  const pfVals =
+  rows.map(x=>x.PF).filter(x=>!isNaN(x));
 
   const avg =
-  pfValues.reduce((a,b)=>a+b,0) /
-  pfValues.length;
+  pfVals.reduce((a,b)=>a+b,0) / pfVals.length;
 
   const min =
-  Math.min(...pfValues);
+  Math.min(...pfVals);
 
   const minRow =
   rows.find(r=>r.PF === min);
@@ -636,13 +635,61 @@ function renderKPIs(rows,events){
   min.toFixed(2);
 
   document.getElementById("kpiMinPFTs").innerText =
-  fmtTs(minRow.ts);
+  fmt(minRow.ts);
 
   document.getElementById("kpiDurationLowPF").innerText =
-  duration + " Min";
+  duration;
 
   document.getElementById("kpiPenalty").innerText =
-  "₹ " + penalty;
+  "₹ "+penalty;
+}
+
+function detectEvents(rows){
+
+  const events = [];
+
+  let current = null;
+
+  rows.forEach((r,i)=>{
+
+    if(r.PF < CONFIG.LOW_PF_THRESHOLD){
+
+      if(!current){
+
+        current = {
+
+          start:r.ts,
+
+          minPF:r.PF,
+
+          kw:r.kW
+        };
+      }
+
+      if(r.PF < current.minPF){
+
+        current.minPF = r.PF;
+
+        current.kw = r.kW;
+      }
+
+    }else{
+
+      if(current){
+
+        current.end = rows[i-1]?.ts || r.ts;
+
+        current.duration =
+        Math.round((current.end-current.start)/60000);
+
+        events.push(current);
+
+        current = null;
+      }
+    }
+  });
+
+  return events;
 }
 
 function renderTrend(rows){
@@ -677,23 +724,26 @@ function renderTrend(rows){
 
     margin:{t:20},
 
+    paper_bgcolor:"#fff",
+
+    plot_bgcolor:"#fff",
+
+    legend:{
+      orientation:"h"
+    },
+
     yaxis:{
       title:"PF",
-      range:[0,1.5]
+      range:[0,1.2]
     },
 
     yaxis2:{
       title:"kW",
       overlaying:"y",
       side:"right"
-    },
-
-    legend:{
-      orientation:"h"
     }
 
   },{
-
     responsive:true,
     displaylogo:false
   });
@@ -715,13 +765,17 @@ function renderScatter(rows){
 
     margin:{t:20},
 
+    paper_bgcolor:"#fff",
+
+    plot_bgcolor:"#fff",
+
     xaxis:{
-      title:"Active Power (kW)"
+      title:"Active Power"
     },
 
     yaxis:{
       title:"PF",
-      range:[0,1.5]
+      range:[0,1.2]
     }
 
   },{
@@ -751,13 +805,13 @@ function renderEvents(events){
 
     <tr>
 
-      <td>${fmtTs(e.start)}</td>
+      <td>${fmt(e.start)}</td>
 
-      <td>${fmtTs(e.end)}</td>
+      <td>${fmt(e.end)}</td>
 
       <td>${e.minPF.toFixed(2)}</td>
 
-      <td>${e.kw.toFixed(1)}</td>
+      <td>${e.kw.toFixed(2)}</td>
 
       <td>${e.duration}</td>
 
@@ -772,45 +826,25 @@ async function generate(){
   try{
 
     document.getElementById("status").innerText =
-    "Fetching Data...";
+    "Loading Data...";
 
     const date =
     document.getElementById("dateInput").value;
 
-    const start =
+    const startTs =
     new Date(date+"T00:00:00").getTime();
 
-    const end =
+    const endTs =
     new Date(date+"T23:59:59").getTime();
 
     const raw =
-    await fetchTelemetry(start,end);
+    await fetchTelemetry(startTs,endTs);
 
     const rows =
-    mergeSeries(raw).map(r=>{
-
-      let p = {};
-
-      try{
-
-        p = JSON.parse(r.chiller_plant_1);
-
-      }catch(e){}
-
-      return {
-
-        ts:r.ts,
-
-        PF:num(p["18_Avg_PF"]),
-
-        kW:num(p["18_Act_Power_Total"]),
-
-        Energy:num(p["18_Act_Energy_Total"])
-      };
-    });
+    mergeSeries(raw);
 
     const events =
-    detectLowPFEvents(rows);
+    detectEvents(rows);
 
     renderKPIs(rows,events);
 
@@ -821,14 +855,14 @@ async function generate(){
     renderEvents(events);
 
     document.getElementById("status").innerText =
-    "Completed";
+    rows.length + " Samples Loaded";
 
   }catch(err){
 
     console.error(err);
 
     document.getElementById("status").innerText =
-    "Error";
+    "Error Loading";
   }
 }
 

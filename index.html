@@ -1,329 +1,319 @@
+<!-- =========================================
+PLANTWIZ PF ANALYSIS REPORT
+FINAL LIVE VERSION
+========================================= -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>PF Analysis</title>
 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PF Analysis</title>
 
 <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 
 <style>
 
 *{
-  box-sizing:border-box;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 body{
-  margin:0;
-  padding:0;
-  background:#f3f4f7;
-  font-family:'Segoe UI',sans-serif;
-  color:#1f2937;
+    font-family:'Segoe UI',sans-serif;
+    background:#f3f4f7;
+    color:#111827;
 }
 
-/* MAIN */
-
-.page{
-  width:100%;
-  padding:8px;
+.wrapper{
+    width:100%;
+    padding:10px;
 }
 
-/* FILTER BAR */
+/* ======================================
+TOP BAR
+====================================== */
 
-.filter-row{
+.topbar{
 
-  width:100%;
+    width:100%;
 
-  display:flex;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
+    background:#ffffff;
 
-  background:#ffffff;
+    border:1px solid #e5e7eb;
 
-  padding:12px 16px;
+    border-radius:10px;
 
-  border-radius:10px;
+    padding:12px 16px;
 
-  border:1px solid #e5e7eb;
+    display:flex;
 
-  margin-bottom:10px;
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:12px;
 }
 
-.filter-item{
-  display:flex;
-  align-items:center;
-  gap:10px;
+.topbar label{
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#6b7280;
 }
 
-.filter-item label{
-  font-size:13px;
-  color:#6b7280;
-  font-weight:600;
+.topbar input{
+
+    padding:8px 12px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:8px;
+
+    font-size:14px;
 }
 
-input[type="date"]{
+.topbar button{
 
-  padding:8px 12px;
+    background:#0b5ed7;
 
-  border:1px solid #d1d5db;
+    color:#fff;
 
-  border-radius:8px;
+    border:none;
 
-  background:#fff;
+    border-radius:8px;
 
-  font-size:14px;
-}
+    padding:10px 18px;
 
-button{
+    font-weight:700;
 
-  border:none;
-
-  border-radius:8px;
-
-  padding:10px 18px;
-
-  cursor:pointer;
-
-  font-size:14px;
-
-  font-weight:700;
-}
-
-.primary{
-
-  background:#0b5ed7;
-
-  color:#fff;
-}
-
-.primary:hover{
-  background:#084298;
+    cursor:pointer;
 }
 
 .status{
-  margin-left:auto;
-  color:#6b7280;
-  font-size:13px;
+    margin-left:auto;
+    color:#6b7280;
+    font-size:13px;
 }
 
-/* KPI SECTION */
+/* ======================================
+KPI CARDS
+====================================== */
 
-.summary-row{
+.kpi-grid{
 
-  width:100%;
+    width:100%;
 
-  display:grid;
+    display:grid;
 
-  grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(4,1fr);
 
-  gap:12px;
+    gap:12px;
 
-  margin-bottom:12px;
+    margin-bottom:12px;
 }
 
 .kpi-card{
 
-  position:relative;
+    position:relative;
 
-  background:#ffffff;
+    background:#ffffff;
 
-  border-radius:10px;
+    border-radius:10px;
 
-  border:1px solid #dfe3e8;
+    border:1px solid #dfe3e8;
 
-  padding:14px 18px;
+    padding:16px 18px;
 
-  min-height:115px;
+    min-height:120px;
 
-  overflow:hidden;
+    overflow:hidden;
 }
 
 .kpi-card::before{
 
-  content:"";
+    content:"";
 
-  position:absolute;
+    position:absolute;
 
-  left:0;
-  top:0;
+    left:0;
+    top:0;
 
-  width:4px;
-  height:100%;
+    width:4px;
+    height:100%;
 
-  background:#10b981;
+    background:#10b981;
 }
 
 .kpi-card.orange::before{
-  background:#f59e0b;
+    background:#f59e0b;
 }
 
 .kpi-card.red::before{
-  background:#ef4444;
+    background:#ef4444;
 }
 
 .kpi-title{
 
-  font-size:11px;
+    font-size:11px;
 
-  letter-spacing:2px;
+    letter-spacing:2px;
 
-  color:#94a3b8;
+    text-transform:uppercase;
 
-  font-weight:700;
+    color:#94a3b8;
 
-  text-transform:uppercase;
+    font-weight:700;
 
-  margin-bottom:10px;
+    margin-bottom:10px;
 }
 
 .kpi-value{
 
-  font-size:52px;
+    font-size:52px;
 
-  line-height:1;
+    font-weight:800;
 
-  font-weight:800;
+    line-height:1;
 
-  color:#0f172a;
+    color:#0f172a;
 }
 
 .kpi-unit{
 
-  font-size:18px;
+    font-size:18px;
 
-  color:#94a3b8;
+    color:#94a3b8;
 
-  font-weight:600;
-
-  margin-left:4px;
+    margin-left:4px;
 }
 
 .kpi-footer{
 
-  margin-top:12px;
+    margin-top:12px;
 
-  display:flex;
+    display:flex;
 
-  align-items:center;
+    align-items:center;
 
-  gap:10px;
+    gap:10px;
 
-  flex-wrap:wrap;
+    flex-wrap:wrap;
 }
 
 .badge{
 
-  background:#dcfce7;
+    background:#dcfce7;
 
-  color:#15803d;
+    color:#15803d;
 
-  font-size:11px;
+    font-size:11px;
 
-  padding:5px 10px;
+    padding:5px 10px;
 
-  border-radius:6px;
+    border-radius:6px;
 
-  font-weight:700;
+    font-weight:700;
 }
 
 .footer-text{
 
-  color:#94a3b8;
+    color:#94a3b8;
 
-  font-size:12px;
+    font-size:12px;
 }
 
-/* PANELS */
+/* ======================================
+PANELS
+====================================== */
 
 .panel{
 
-  width:100%;
+    width:100%;
 
-  background:#ffffff;
+    background:#ffffff;
 
-  border-radius:10px;
+    border-radius:10px;
 
-  border:1px solid #e5e7eb;
+    border:1px solid #e5e7eb;
 
-  padding:14px;
+    padding:14px;
 
-  margin-bottom:12px;
+    margin-bottom:12px;
 }
 
 .panel h3{
 
-  margin:0 0 12px;
+    margin-bottom:12px;
 
-  font-size:18px;
+    font-size:18px;
 
-  color:#111827;
+    color:#111827;
 }
 
-/* TABLE */
-
-.table-wrap{
-  width:100%;
-  overflow:auto;
-}
+/* ======================================
+TABLE
+====================================== */
 
 table{
-  width:100%;
-  border-collapse:collapse;
+    width:100%;
+    border-collapse:collapse;
 }
 
 thead th{
 
-  background:#f8fafc;
+    background:#f8fafc;
 
-  color:#334155;
+    color:#334155;
 
-  padding:12px;
+    padding:12px;
 
-  font-size:13px;
+    border-bottom:1px solid #e5e7eb;
 
-  border-bottom:1px solid #e5e7eb;
+    font-size:13px;
 }
 
 tbody td{
 
-  padding:12px;
+    padding:12px;
 
-  text-align:center;
+    border-bottom:1px solid #edf2f7;
 
-  border-bottom:1px solid #edf2f7;
+    text-align:center;
 
-  font-size:13px;
+    font-size:13px;
 }
 
 tbody tr:nth-child(even){
-  background:#fafafa;
+    background:#fafafa;
 }
-
-/* RESPONSIVE */
 
 @media(max-width:1200px){
 
-  .summary-row{
-    grid-template-columns:repeat(2,1fr);
-  }
+    .kpi-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
 }
 
 @media(max-width:700px){
 
-  .summary-row{
-    grid-template-columns:1fr;
-  }
+    .kpi-grid{
+        grid-template-columns:1fr;
+    }
 
-  .filter-row{
-    flex-direction:column;
-    align-items:flex-start;
-  }
+    .topbar{
+        flex-direction:column;
+        align-items:flex-start;
+    }
 
-  .status{
-    margin-left:0;
-  }
+    .status{
+        margin-left:0;
+    }
 }
 
 </style>
@@ -331,542 +321,606 @@ tbody tr:nth-child(even){
 
 <body>
 
-<div class="page">
+<div class="wrapper">
 
-  <!-- FILTER -->
+    <!-- ======================
+    TOP BAR
+    ======================= -->
 
-  <div class="filter-row">
+    <div class="topbar">
 
-    <div class="filter-item">
+        <label>🟢 Date</label>
 
-      <label>🟢 Date</label>
+        <input type="date" id="dateInput">
 
-      <input type="date" id="dateInput">
+        <button onclick="loadData()">
+            ▶ Analyze
+        </button>
+
+        <div class="status" id="statusText">
+            Waiting...
+        </div>
 
     </div>
 
-    <button class="primary" id="btnGenerate">
-      ▶ Analyze
-    </button>
+    <!-- ======================
+    KPI
+    ======================= -->
 
-    <button class="primary" id="btnExport">
-      ⬇ Export
-    </button>
+    <div class="kpi-grid">
 
-    <div class="status" id="status">
-      Waiting...
-    </div>
+        <div class="kpi-card">
 
-  </div>
+            <div class="kpi-title">
+                Average PF
+            </div>
 
-  <!-- KPI -->
+            <div>
+                <span class="kpi-value" id="avgPF">--</span>
+            </div>
 
-  <div class="summary-row">
+            <div class="kpi-footer">
 
-    <!-- AVG PF -->
+                <div class="badge">
+                    ✔ LIVE
+                </div>
 
-    <div class="kpi-card">
+                <div class="footer-text">
+                    Average from telemetry
+                </div>
 
-      <div class="kpi-title">
-        Average PF
-      </div>
+            </div>
 
-      <div>
-        <span class="kpi-value" id="kpiAvgPF">0.00</span>
-      </div>
-
-      <div class="kpi-footer">
-
-        <div class="badge">
-          ✔ NORMAL
         </div>
 
-        <div class="footer-text">
-          target 0.95 / ideal 1.0
+        <div class="kpi-card orange">
+
+            <div class="kpi-title">
+                Minimum PF
+            </div>
+
+            <div>
+                <span class="kpi-value" id="minPF">--</span>
+            </div>
+
+            <div class="kpi-footer">
+
+                <div class="badge">
+                    ⚠ LIVE
+                </div>
+
+                <div class="footer-text" id="minPFTime">
+                    --
+                </div>
+
+            </div>
+
         </div>
 
-      </div>
+        <div class="kpi-card">
 
-    </div>
+            <div class="kpi-title">
+                Low PF Duration
+            </div>
 
-    <!-- MIN PF -->
+            <div>
+                <span class="kpi-value" id="durationPF">--</span>
+                <span class="kpi-unit">Min</span>
+            </div>
 
-    <div class="kpi-card orange">
+            <div class="kpi-footer">
 
-      <div class="kpi-title">
-        Minimum PF
-      </div>
+                <div class="badge">
+                    ✔ LIVE
+                </div>
 
-      <div>
-        <span class="kpi-value" id="kpiMinPF">0.00</span>
-      </div>
+                <div class="footer-text">
+                    PF below 0.90
+                </div>
 
-      <div class="kpi-footer">
+            </div>
 
-        <div class="badge">
-          ⚠ LOW
         </div>
 
-        <div class="footer-text" id="kpiMinPFTs">
-          --
+        <div class="kpi-card red">
+
+            <div class="kpi-title">
+                Estimated Penalty
+            </div>
+
+            <div>
+                <span class="kpi-value" id="penaltyPF">--</span>
+            </div>
+
+            <div class="kpi-footer">
+
+                <div class="badge">
+                    ₹ LIVE
+                </div>
+
+                <div class="footer-text">
+                    Based on low PF duration
+                </div>
+
+            </div>
+
         </div>
-
-      </div>
-
-    </div>
-
-    <!-- DURATION -->
-
-    <div class="kpi-card">
-
-      <div class="kpi-title">
-        Low PF Duration
-      </div>
-
-      <div>
-        <span class="kpi-value" id="kpiDurationLowPF">0</span>
-        <span class="kpi-unit">Min</span>
-      </div>
-
-      <div class="kpi-footer">
-
-        <div class="badge">
-          ✔ TRACKED
-        </div>
-
-        <div class="footer-text">
-          PF below 0.90
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- PENALTY -->
-
-    <div class="kpi-card red">
-
-      <div class="kpi-title">
-        Estimated Penalty
-      </div>
-
-      <div>
-        <span class="kpi-value" id="kpiPenalty">0</span>
-      </div>
-
-      <div class="kpi-footer">
-
-        <div class="badge">
-          ₹ COST
-        </div>
-
-        <div class="footer-text">
-          estimated utility loss
-        </div>
-
-      </div>
 
     </div>
 
-  </div>
+    <!-- ======================
+    PF TREND
+    ======================= -->
 
-  <!-- TREND -->
+    <div class="panel">
 
-  <div class="panel">
+        <h3>
+            PF Trend With Active Power
+        </h3>
 
-    <h3>
-      PF Trend With Active Power
-    </h3>
-
-    <div id="pfTrend" style="height:430px;"></div>
-
-  </div>
-
-  <!-- SCATTER -->
-
-  <div class="panel">
-
-    <h3>
-      PF vs Active Power
-    </h3>
-
-    <div id="pfScatter" style="height:430px;"></div>
-
-  </div>
-
-  <!-- TABLE -->
-
-  <div class="panel">
-
-    <h3>
-      Low PF Events
-    </h3>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>Start</th>
-            <th>End</th>
-            <th>Min PF</th>
-            <th>kW @ Min PF</th>
-            <th>Duration (Min)</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody id="eventsBody">
-
-          <tr>
-            <td colspan="5">
-              No Data
-            </td>
-          </tr>
-
-        </tbody>
-
-      </table>
+        <div id="pfTrend" style="height:420px;"></div>
 
     </div>
 
-  </div>
+    <!-- ======================
+    PF SCATTER
+    ======================= -->
+
+    <div class="panel">
+
+        <h3>
+            PF vs Active Power
+        </h3>
+
+        <div id="pfScatter" style="height:420px;"></div>
+
+    </div>
+
+    <!-- ======================
+    EVENT TABLE
+    ======================= -->
+
+    <div class="panel">
+
+        <h3>
+            Low PF Events
+        </h3>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Min PF</th>
+                    <th>kW @ Min PF</th>
+                    <th>Duration</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="eventsTable">
+
+                <tr>
+                    <td colspan="5">
+                        No Data
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
 
 <script>
 
-const CONFIG = {
+/* =========================================
+CONFIG
+========================================= */
 
-  API_BASE_URL:"https://plantwiz.pimateck.in/api",
+const DEVICE_ID =
+"1250b550-5bdb-11f0-9b14-15d3b3a473c1";
 
-  DEVICE_ID:"1250b550-5bdb-11f0-9b14-15d3b3a473c1",
+const JWT_TOKEN =
+localStorage.getItem("jwt_token");
 
-  LOW_PF_THRESHOLD:0.90
-};
-
-const TOKEN =
-new URLSearchParams(window.location.search).get("token");
+/* =========================================
+DEFAULT DATE
+========================================= */
 
 document.getElementById("dateInput").value =
 new Date().toISOString().split('T')[0];
 
-document.getElementById("btnGenerate")
-.addEventListener("click",generate);
+/* =========================================
+FORMAT DATE
+========================================= */
 
-function fmt(ts){
+function formatTime(ts){
 
-  return new Date(ts).toLocaleString();
+    return new Date(ts).toLocaleString();
 }
 
-async function fetchTelemetry(startTs,endTs){
+/* =========================================
+LOAD DATA
+========================================= */
 
-  const url =
-`${CONFIG.API_BASE_URL}/plugins/telemetry/DEVICE/${CONFIG.DEVICE_ID}/values/timeseries?keys=chiller_plant_1&startTs=${startTs}&endTs=${endTs}&limit=50000&agg=NONE`;
+async function loadData(){
 
-  const res = await fetch(url,{
+    try{
 
-    headers:{
-      "X-Authorization":"Bearer "+TOKEN
-    }
-  });
+        document.getElementById("statusText").innerHTML =
+        "Loading telemetry...";
 
-  return await res.json();
-}
+        const selectedDate =
+        document.getElementById("dateInput").value;
 
-function mergeSeries(obj){
+        const startTs =
+        new Date(selectedDate + "T00:00:00").getTime();
 
-  const rows = [];
+        const endTs =
+        new Date(selectedDate + "T23:59:59").getTime();
 
-  if(obj.chiller_plant_1){
+        const url =
+        `/api/plugins/telemetry/DEVICE/${DEVICE_ID}/values/timeseries?keys=chiller_plant_1&startTs=${startTs}&endTs=${endTs}&limit=50000&agg=NONE`;
 
-    obj.chiller_plant_1.forEach(item=>{
+        const response =
+        await fetch(url,{
 
-      try{
+            method:"GET",
 
-        const data = JSON.parse(item.value);
-
-        rows.push({
-
-          ts:item.ts,
-
-          PF:Number(data["18_Avg_PF"]),
-
-          kW:Number(data["18_Act_Power_Total"]),
-
-          kWh:Number(data["18_Act_Energy_Total"])
+            headers:{
+                "X-Authorization":"Bearer " + JWT_TOKEN
+            }
         });
 
-      }catch(e){}
-    });
-  }
+        const raw =
+        await response.json();
 
-  return rows.sort((a,b)=>a.ts-b.ts);
-}
+        if(!raw.chiller_plant_1){
 
-function renderKPIs(rows,events){
+            document.getElementById("statusText").innerHTML =
+            "No telemetry found";
 
-  const pfVals =
-  rows.map(x=>x.PF).filter(x=>!isNaN(x));
+            return;
+        }
 
-  const avg =
-  pfVals.reduce((a,b)=>a+b,0) / pfVals.length;
+        const rows = [];
 
-  const min =
-  Math.min(...pfVals);
+        raw.chiller_plant_1.forEach(item=>{
 
-  const minRow =
-  rows.find(r=>r.PF === min);
+            try{
 
-  const duration =
-  events.reduce((s,e)=>s+e.duration,0);
+                const data =
+                JSON.parse(item.value);
 
-  const penalty =
-  Math.round(duration * 15);
+                rows.push({
 
-  document.getElementById("kpiAvgPF").innerText =
-  avg.toFixed(2);
+                    ts:item.ts,
 
-  document.getElementById("kpiMinPF").innerText =
-  min.toFixed(2);
+                    pf:Number(data["18_Avg_PF"]),
 
-  document.getElementById("kpiMinPFTs").innerText =
-  fmt(minRow.ts);
+                    kw:Number(data["18_Act_Power_Total"]),
 
-  document.getElementById("kpiDurationLowPF").innerText =
-  duration;
+                    kwh:Number(data["18_Act_Energy_Total"])
 
-  document.getElementById("kpiPenalty").innerText =
-  "₹ "+penalty;
-}
+                });
 
-function detectEvents(rows){
+            }catch(err){}
+        });
 
-  const events = [];
+        rows.sort((a,b)=>a.ts-b.ts);
 
-  let current = null;
+        processKPIs(rows);
 
-  rows.forEach((r,i)=>{
+        renderTrend(rows);
 
-    if(r.PF < CONFIG.LOW_PF_THRESHOLD){
+        renderScatter(rows);
 
-      if(!current){
+        renderEvents(rows);
 
-        current = {
+        document.getElementById("statusText").innerHTML =
+        rows.length + " Samples Loaded";
 
-          start:r.ts,
+    }catch(err){
 
-          minPF:r.PF,
+        console.error(err);
 
-          kw:r.kW
-        };
-      }
-
-      if(r.PF < current.minPF){
-
-        current.minPF = r.PF;
-
-        current.kw = r.kW;
-      }
-
-    }else{
-
-      if(current){
-
-        current.end = rows[i-1]?.ts || r.ts;
-
-        current.duration =
-        Math.round((current.end-current.start)/60000);
-
-        events.push(current);
-
-        current = null;
-      }
+        document.getElementById("statusText").innerHTML =
+        "Error Loading Data";
     }
-  });
-
-  return events;
 }
+
+/* =========================================
+PROCESS KPI
+========================================= */
+
+function processKPIs(rows){
+
+    if(rows.length === 0){
+        return;
+    }
+
+    const validPF =
+    rows.filter(r=>!isNaN(r.pf));
+
+    /* =====================
+    AVG PF
+    ===================== */
+
+    const avgPF =
+    validPF.reduce((sum,r)=>sum + r.pf,0)
+    /
+    validPF.length;
+
+    document.getElementById("avgPF").innerHTML =
+    avgPF.toFixed(2);
+
+    /* =====================
+    MIN PF
+    ===================== */
+
+    let minPF = 999;
+
+    let minPFTime = "";
+
+    validPF.forEach(r=>{
+
+        if(r.pf < minPF){
+
+            minPF = r.pf;
+
+            minPFTime = formatTime(r.ts);
+        }
+    });
+
+    document.getElementById("minPF").innerHTML =
+    minPF.toFixed(2);
+
+    document.getElementById("minPFTime").innerHTML =
+    minPFTime;
+
+    /* =====================
+    LOW PF DURATION
+    ===================== */
+
+    let lowDuration = 0;
+
+    validPF.forEach(r=>{
+
+        if(r.pf < 0.90){
+
+            lowDuration++;
+        }
+    });
+
+    document.getElementById("durationPF").innerHTML =
+    lowDuration;
+
+    /* =====================
+    PENALTY CALCULATION
+    ===================== */
+
+    let totalPenalty = 0;
+
+    validPF.forEach(r=>{
+
+        if(r.pf < 0.90){
+
+            totalPenalty +=
+            ((0.90 - r.pf) * r.kw * 0.5);
+        }
+    });
+
+    document.getElementById("penaltyPF").innerHTML =
+    "₹ " + totalPenalty.toFixed(0);
+}
+
+/* =========================================
+PF TREND
+========================================= */
 
 function renderTrend(rows){
 
-  Plotly.newPlot("pfTrend",[
+    Plotly.newPlot("pfTrend",[
 
-    {
+        {
 
-      x:rows.map(r=>new Date(r.ts)),
+            x:rows.map(r=>new Date(r.ts)),
 
-      y:rows.map(r=>r.PF),
+            y:rows.map(r=>r.pf),
 
-      name:"PF",
+            name:"Power Factor",
 
-      mode:"lines"
-    },
+            mode:"lines",
 
-    {
+            line:{
+                width:3
+            }
+        },
 
-      x:rows.map(r=>new Date(r.ts)),
+        {
 
-      y:rows.map(r=>r.kW),
+            x:rows.map(r=>new Date(r.ts)),
 
-      name:"kW",
+            y:rows.map(r=>r.kw),
 
-      yaxis:"y2",
+            name:"Active Power",
 
-      mode:"lines"
-    }
+            mode:"lines",
 
-  ],{
+            yaxis:"y2"
+        }
 
-    margin:{t:20},
+    ],{
 
-    paper_bgcolor:"#fff",
+        paper_bgcolor:"#ffffff",
 
-    plot_bgcolor:"#fff",
+        plot_bgcolor:"#ffffff",
 
-    legend:{
-      orientation:"h"
-    },
+        margin:{t:20},
 
-    yaxis:{
-      title:"PF",
-      range:[0,1.2]
-    },
+        legend:{
+            orientation:"h"
+        },
 
-    yaxis2:{
-      title:"kW",
-      overlaying:"y",
-      side:"right"
-    }
+        yaxis:{
+            title:"PF",
+            range:[0,1.2]
+        },
 
-  },{
-    responsive:true,
-    displaylogo:false
-  });
+        yaxis2:{
+            title:"kW",
+            overlaying:"y",
+            side:"right"
+        }
+
+    },{
+        responsive:true,
+        displaylogo:false
+    });
 }
+
+/* =========================================
+SCATTER
+========================================= */
 
 function renderScatter(rows){
 
-  Plotly.newPlot("pfScatter",[{
+    Plotly.newPlot("pfScatter",[{
 
-    x:rows.map(r=>r.kW),
+        x:rows.map(r=>r.kw),
 
-    y:rows.map(r=>r.PF),
+        y:rows.map(r=>r.pf),
 
-    mode:"markers",
+        mode:"markers",
 
-    name:"PF vs kW"
+        name:"PF vs kW"
 
-  }],{
+    }],{
 
-    margin:{t:20},
+        paper_bgcolor:"#ffffff",
 
-    paper_bgcolor:"#fff",
+        plot_bgcolor:"#ffffff",
 
-    plot_bgcolor:"#fff",
+        margin:{t:20},
 
-    xaxis:{
-      title:"Active Power"
-    },
+        xaxis:{
+            title:"Active Power"
+        },
 
-    yaxis:{
-      title:"PF",
-      range:[0,1.2]
+        yaxis:{
+            title:"PF",
+            range:[0,1.2]
+        }
+
+    },{
+        responsive:true,
+        displaylogo:false
+    });
+}
+
+/* =========================================
+EVENT TABLE
+========================================= */
+
+function renderEvents(rows){
+
+    const tbody =
+    document.getElementById("eventsTable");
+
+    tbody.innerHTML = "";
+
+    const events = [];
+
+    let currentEvent = null;
+
+    rows.forEach((r,index)=>{
+
+        if(r.pf < 0.90){
+
+            if(!currentEvent){
+
+                currentEvent = {
+
+                    start:r.ts,
+
+                    minPF:r.pf,
+
+                    kw:r.kw
+                };
+            }
+
+            if(r.pf < currentEvent.minPF){
+
+                currentEvent.minPF = r.pf;
+
+                currentEvent.kw = r.kw;
+            }
+
+        }else{
+
+            if(currentEvent){
+
+                currentEvent.end =
+                rows[index-1]?.ts || r.ts;
+
+                currentEvent.duration =
+                Math.round(
+                    (currentEvent.end-currentEvent.start)
+                    /60000
+                );
+
+                events.push(currentEvent);
+
+                currentEvent = null;
+            }
+        }
+    });
+
+    if(events.length === 0){
+
+        tbody.innerHTML =
+        `<tr>
+            <td colspan="5">
+                No Low PF Events
+            </td>
+        </tr>`;
+
+        return;
     }
 
-  },{
-    responsive:true,
-    displaylogo:false
-  });
+    events.forEach(e=>{
+
+        tbody.innerHTML += `
+
+        <tr>
+
+            <td>${formatTime(e.start)}</td>
+
+            <td>${formatTime(e.end)}</td>
+
+            <td>${e.minPF.toFixed(2)}</td>
+
+            <td>${e.kw.toFixed(2)}</td>
+
+            <td>${e.duration} Min</td>
+
+        </tr>
+        `;
+    });
 }
 
-function renderEvents(events){
+/* =========================================
+INITIAL LOAD
+========================================= */
 
-  const tbody =
-  document.getElementById("eventsBody");
-
-  tbody.innerHTML = "";
-
-  if(events.length === 0){
-
-    tbody.innerHTML =
-    '<tr><td colspan="5">No Low PF Events</td></tr>';
-
-    return;
-  }
-
-  events.forEach(e=>{
-
-    tbody.innerHTML += `
-
-    <tr>
-
-      <td>${fmt(e.start)}</td>
-
-      <td>${fmt(e.end)}</td>
-
-      <td>${e.minPF.toFixed(2)}</td>
-
-      <td>${e.kw.toFixed(2)}</td>
-
-      <td>${e.duration}</td>
-
-    </tr>
-
-    `;
-  });
-}
-
-async function generate(){
-
-  try{
-
-    document.getElementById("status").innerText =
-    "Loading Data...";
-
-    const date =
-    document.getElementById("dateInput").value;
-
-    const startTs =
-    new Date(date+"T00:00:00").getTime();
-
-    const endTs =
-    new Date(date+"T23:59:59").getTime();
-
-    const raw =
-    await fetchTelemetry(startTs,endTs);
-
-    const rows =
-    mergeSeries(raw);
-
-    const events =
-    detectEvents(rows);
-
-    renderKPIs(rows,events);
-
-    renderTrend(rows);
-
-    renderScatter(rows);
-
-    renderEvents(events);
-
-    document.getElementById("status").innerText =
-    rows.length + " Samples Loaded";
-
-  }catch(err){
-
-    console.error(err);
-
-    document.getElementById("status").innerText =
-    "Error Loading";
-  }
-}
-
-generate();
+loadData();
 
 </script>
 

@@ -2,151 +2,117 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>PF Analysis</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
-
 body{
+    font-family: Arial;
     background:#f5f7fb;
-    padding:12px;
+    margin:0;
+    padding:20px;
+    color:#222;
 }
 
-/* TOP BAR */
-
-.top-bar{
-    width:100%;
-    background:#fff;
+.topbar{
+    background:white;
+    padding:15px;
     border-radius:12px;
-    padding:14px;
     display:flex;
     align-items:center;
-    gap:12px;
-    margin-bottom:14px;
-    box-shadow:0 2px 10px rgba(0,0,0,.05);
+    gap:15px;
+    margin-bottom:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
-.date-input{
-    height:42px;
-    padding:0 14px;
-    border:1px solid #dfe3eb;
-    border-radius:10px;
-    font-size:14px;
+input{
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
 }
 
-.analyze-btn{
-    height:42px;
-    padding:0 22px;
+button{
+    background:#0d47a1;
+    color:white;
     border:none;
-    border-radius:10px;
-    background:#2563eb;
-    color:#fff;
-    font-weight:600;
+    padding:10px 18px;
+    border-radius:8px;
     cursor:pointer;
+    font-weight:bold;
 }
-
-/* KPI */
 
 .kpi-grid{
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:14px;
-    margin-bottom:14px;
+    gap:16px;
+    margin-bottom:20px;
 }
 
 .kpi-card{
-    background:#fff;
+    background:white;
     border-radius:14px;
-    padding:18px;
+    padding:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
     position:relative;
-    overflow:hidden;
-    min-height:140px;
-    box-shadow:0 2px 10px rgba(0,0,0,.05);
 }
 
-.kpi-card::before{
-    content:"";
-    position:absolute;
-    left:0;
-    top:0;
-    width:4px;
-    height:100%;
+.kpi-card.green{
+    border-left:5px solid #00c853;
 }
 
-.green::before{background:#22c55e;}
-.orange::before{background:#f59e0b;}
-.blue::before{background:#2563eb;}
-.red::before{background:#ef4444;}
+.kpi-card.orange{
+    border-left:5px solid #ff9800;
+}
+
+.kpi-card.blue{
+    border-left:5px solid #2962ff;
+}
+
+.kpi-card.red{
+    border-left:5px solid #ff5252;
+}
 
 .kpi-title{
     font-size:12px;
     letter-spacing:2px;
-    color:#94a3b8;
-    font-weight:700;
-    margin-bottom:22px;
-}
-
-.kpi-value{
-    font-size:42px;
-    font-weight:700;
-    color:#0f172a;
-    margin-bottom:14px;
-}
-
-.kpi-sub{
-    color:#94a3b8;
-    font-size:13px;
-}
-
-.live-badge{
-    display:inline-block;
-    background:#dcfce7;
-    color:#16a34a;
-    padding:5px 10px;
-    border-radius:8px;
-    font-size:11px;
-    font-weight:700;
-    margin-right:8px;
-}
-
-/* CHART */
-
-.chart-card{
-    background:#fff;
-    border-radius:14px;
-    padding:18px;
-    margin-bottom:14px;
-    box-shadow:0 2px 10px rgba(0,0,0,.05);
-}
-
-.chart-title{
-    font-size:16px;
+    color:#8c99b2;
     font-weight:700;
     margin-bottom:20px;
 }
 
-canvas{
-    width:100% !important;
-    height:420px !important;
+.kpi-value{
+    font-size:42px;
+    font-weight:800;
+    color:#0b1736;
 }
 
-/* TABLE */
+.kpi-sub{
+    margin-top:12px;
+    color:#8c99b2;
+    font-size:13px;
+}
+
+.chart-card{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.chart-title{
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:15px;
+}
 
 .table-card{
-    background:#fff;
+    background:white;
     border-radius:14px;
-    padding:18px;
-    box-shadow:0 2px 10px rgba(0,0,0,.05);
+    padding:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
 table{
@@ -155,26 +121,15 @@ table{
 }
 
 th{
-    background:#f1f5f9;
-    padding:12px;
-    text-align:left;
-    font-size:13px;
+    background:#ffd600;
+    padding:14px;
+    text-align:center;
 }
 
 td{
-    padding:12px;
-    border-bottom:1px solid #e2e8f0;
-    font-size:13px;
-}
-
-.low{
-    color:#dc2626;
-    font-weight:700;
-}
-
-.normal{
-    color:#16a34a;
-    font-weight:700;
+    padding:14px;
+    text-align:center;
+    border-bottom:1px solid #eee;
 }
 
 </style>
@@ -182,17 +137,13 @@ td{
 
 <body>
 
-<div class="top-bar">
+<div class="topbar">
 
-    <input type="date" id="datePicker" class="date-input">
+    <input type="date" id="datePicker">
 
-    <button class="analyze-btn" onclick="generateReport()">
-        ▶ Analyze
+    <button id="analyzeBtn">
+        Analyze
     </button>
-
-    <div style="margin-left:auto;color:#64748b;font-size:13px;" id="statusText">
-        Ready
-    </div>
 
 </div>
 
@@ -201,68 +152,66 @@ td{
     <div class="kpi-card green">
         <div class="kpi-title">AVERAGE PF</div>
         <div class="kpi-value" id="avgPF">--</div>
-        <div>
-            <span class="live-badge">LIVE</span>
-            <span class="kpi-sub">Average from telemetry</span>
-        </div>
+        <div class="kpi-sub">Average from telemetry</div>
     </div>
 
     <div class="kpi-card orange">
         <div class="kpi-title">MINIMUM PF</div>
         <div class="kpi-value" id="minPF">--</div>
-        <div>
-            <span class="live-badge">LIVE</span>
-            <span class="kpi-sub">Lowest detected PF</span>
-        </div>
+        <div class="kpi-sub">Lowest PF detected</div>
     </div>
 
     <div class="kpi-card blue">
         <div class="kpi-title">LOW PF DURATION</div>
         <div class="kpi-value">
-            <span id="lowPFDuration">--</span>
-            <span style="font-size:28px;color:#94a3b8;">Min</span>
+            <span id="lowPFDuration">--</span> Min
         </div>
-        <div>
-            <span class="live-badge">LIVE</span>
-            <span class="kpi-sub">PF below 0.90</span>
-        </div>
+        <div class="kpi-sub">PF below 0.90</div>
     </div>
 
     <div class="kpi-card red">
         <div class="kpi-title">ESTIMATED PENALTY</div>
-        <div class="kpi-value">₹ <span id="penalty">--</span></div>
-        <div>
-            <span class="live-badge">LIVE</span>
-            <span class="kpi-sub">Estimated</span>
+        <div class="kpi-value">
+            ₹ <span id="estimatedPenalty">--</span>
         </div>
+        <div class="kpi-sub">Estimated</div>
     </div>
 
 </div>
 
 <div class="chart-card">
 
-    <div class="chart-title">PF Trend With Active Power</div>
+    <div class="chart-title">
+        PF vs kW
+    </div>
 
-    <canvas id="pfChart"></canvas>
+    <canvas id="pfVsKwChart"></canvas>
 
 </div>
 
 <div class="table-card">
 
-    <div class="chart-title">PF Event Table</div>
+    <div class="chart-title">
+        Events Table (PF &lt; 0.90)
+    </div>
 
     <table>
 
         <thead>
-        <tr>
-            <th>Timestamp</th>
-            <th>PF</th>
-            <th>Active Power (kW)</th>
-            <th>Status</th>
-        </tr>
+
+            <tr>
+                <th>Start</th>
+                <th>End</th>
+                <th>Min PF</th>
+                <th>kW@minPF</th>
+                <th>Duration (min)</th>
+            </tr>
+
         </thead>
 
-        <tbody id="eventTable"></tbody>
+        <tbody id="eventsTableBody">
+
+        </tbody>
 
     </table>
 
@@ -270,102 +219,74 @@ td{
 
 <script>
 
-/* ============================
-   CONFIG
-============================ */
+// ========================
+// CONFIG
+// ========================
 
-const DEVICE_ID = "1250b550-5bdb-11f0-9b14-15d3b3a473c1";
+const DEVICE_ID =
+"1250b550-5bdb-11f0-9b14-15d3b3a473c1";
 
-const qs = new URLSearchParams(window.location.search);
+const JWT =
+new URLSearchParams(window.location.search)
+.get("token");
 
-const JWT = qs.get("token");
-
-/* ============================
-   DATE DEFAULT
-============================ */
-
-const datePicker = document.getElementById("datePicker");
+// ========================
+// DEFAULT DATE
+// ========================
 
 const today = new Date();
 
-datePicker.value =
-    today.getFullYear() + "-" +
-    String(today.getMonth()+1).padStart(2,'0') + "-" +
-    String(today.getDate()).padStart(2,'0');
+const yyyy = today.getFullYear();
 
-/* ============================
-   CHART
-============================ */
+const mm =
+String(today.getMonth()+1).padStart(2,'0');
 
-const ctx = document.getElementById("pfChart");
+const dd =
+String(today.getDate()).padStart(2,'0');
 
-const pfChart = new Chart(ctx,{
+document.getElementById("datePicker").value =
+`${yyyy}-${mm}-${dd}`;
 
-    type:'line',
+// ========================
+// IST RANGE
+// ========================
 
-    data:{
-        labels:[],
-        datasets:[
-            {
-                label:'Power Factor',
-                data:[],
-                borderColor:'#2563eb',
-                backgroundColor:'rgba(37,99,235,.15)',
-                tension:.3,
-                yAxisID:'y'
-            },
-            {
-                label:'Active Power',
-                data:[],
-                borderColor:'#ef4444',
-                backgroundColor:'rgba(239,68,68,.15)',
-                tension:.3,
-                yAxisID:'y1'
-            }
-        ]
-    },
+function getISTRange(selectedDate){
 
-    options:{
-        responsive:true,
-        maintainAspectRatio:false,
+    const start =
+    new Date(selectedDate + "T00:00:00+05:30");
 
-        interaction:{
-            mode:'index',
-            intersect:false
-        },
+    const end =
+    new Date(selectedDate + "T23:59:59+05:30");
 
-        scales:{
-            y:{
-                position:'left',
-                min:0,
-                max:1
-            },
-            y1:{
-                position:'right',
-                grid:{
-                    drawOnChartArea:false
-                }
-            }
-        }
-    }
-});
+    return {
 
-/* ============================
-   FETCH TELEMETRY
-============================ */
+        startTs:start.getTime(),
+
+        endTs:end.getTime()
+    };
+}
+
+// ========================
+// FETCH TELEMETRY
+// ========================
 
 async function fetchTelemetry(startTs,endTs){
 
     const url =
-    `https://plantwiz.pimateck.in/api/plugins/telemetry/DEVICE/${DEVICE_ID}/values/timeseries`
-    + `?keys=chiller_plant_1`
-    + `&startTs=${startTs}`
-    + `&endTs=${endTs}`
-    + `&limit=50000`
-    + `&agg=NONE`;
+    "https://plantwiz.pimateck.in/api/plugins/telemetry/DEVICE/"
+    + DEVICE_ID
+    + "/values/timeseries"
+    + "?keys=chiller_plant_1"
+    + "&startTs=" + startTs
+    + "&endTs=" + endTs
+    + "&limit=50000"
+    + "&agg=NONE";
 
     const response = await fetch(url,{
+
         method:"GET",
+
         headers:{
             "Content-Type":"application/json",
             "X-Authorization":"Bearer " + JWT
@@ -373,153 +294,339 @@ async function fetchTelemetry(startTs,endTs){
     });
 
     if(!response.ok){
-        throw new Error("API Error : " + response.status);
+
+        throw new Error(await response.text());
     }
 
     return await response.json();
 }
 
-/* ============================
-   PARSE
-============================ */
+// ========================
+// PARSE
+// ========================
 
-function parseData(apiData){
+function parseTelemetry(data){
 
-    const arr = apiData.chiller_plant_1 || [];
+    if(!data.chiller_plant_1){
+        return [];
+    }
 
-    return arr.map(item=>{
+    return data.chiller_plant_1.map(item=>{
 
-        let parsed = {};
-
-        try{
-            parsed = JSON.parse(item.value);
-        }catch(e){}
+        const parsed = JSON.parse(item.value);
 
         return{
 
             ts:item.ts,
 
-            pf:parseFloat(parsed["18_Avg_PF"]) || 0,
+            pf:
+            parseFloat(parsed["18_Avg_PF"]) || 0,
 
-            kw:parseFloat(parsed["18_Act_Power_Total"]) || 0,
+            kw:
+            parseFloat(parsed["18_Act_Power_Total"]) || 0,
 
-            kwh:parseFloat(parsed["18_Act_Energy_Total"]) || 0
+            kwh:
+            parseFloat(parsed["18_Act_Energy_Total"]) || 0
         };
     });
 }
 
-/* ============================
-   GENERATE REPORT
-============================ */
+// ========================
+// KPI
+// ========================
+
+function updateKPIs(rows){
+
+    if(!rows.length) return;
+
+    const pfValues =
+    rows.map(r=>r.pf);
+
+    const avgPF =
+    pfValues.reduce((a,b)=>a+b,0)
+    / pfValues.length;
+
+    const minPF =
+    Math.min(...pfValues);
+
+    let lowPFMinutes = 0;
+
+    rows.forEach(r=>{
+
+        if(r.pf < 0.90){
+
+            lowPFMinutes++;
+        }
+    });
+
+    const estimatedPenalty =
+    lowPFMinutes * 2;
+
+    document.getElementById("avgPF")
+    .innerText = avgPF.toFixed(2);
+
+    document.getElementById("minPF")
+    .innerText = minPF.toFixed(2);
+
+    document.getElementById("lowPFDuration")
+    .innerText = lowPFMinutes;
+
+    document.getElementById("estimatedPenalty")
+    .innerText =
+    estimatedPenalty.toFixed(0);
+}
+
+// ========================
+// CHART
+// ========================
+
+function renderPFvsKW(rows){
+
+    const ctx =
+    document.getElementById("pfVsKwChart");
+
+    if(window.chartObj){
+
+        window.chartObj.destroy();
+    }
+
+    const points =
+    rows.map(r=>({
+
+        x:r.kw,
+        y:r.pf
+    }));
+
+    window.chartObj =
+    new Chart(ctx,{
+
+        type:"scatter",
+
+        data:{
+
+            datasets:[{
+
+                label:"PF vs kW",
+
+                data:points,
+
+                backgroundColor:"#1976d2",
+
+                pointRadius:3
+            }]
+        },
+
+        options:{
+
+            responsive:true,
+
+            plugins:{
+
+                legend:{
+                    display:false
+                }
+            },
+
+            scales:{
+
+                x:{
+                    title:{
+                        display:true,
+                        text:"kW"
+                    }
+                },
+
+                y:{
+                    title:{
+                        display:true,
+                        text:"PF"
+                    },
+                    min:0,
+                    max:1.5
+                }
+            }
+        }
+    });
+}
+
+// ========================
+// EVENTS
+// ========================
+
+function generatePFEvents(rows){
+
+    const events = [];
+
+    let activeEvent = null;
+
+    rows.forEach(row=>{
+
+        const pf = row.pf;
+        const kw = row.kw;
+        const ts = row.ts;
+
+        if(pf < 0.90){
+
+            if(!activeEvent){
+
+                activeEvent = {
+
+                    start:ts,
+
+                    end:ts,
+
+                    minPF:pf,
+
+                    kwAtMinPF:kw
+                };
+
+            }else{
+
+                activeEvent.end = ts;
+
+                if(pf < activeEvent.minPF){
+
+                    activeEvent.minPF = pf;
+
+                    activeEvent.kwAtMinPF = kw;
+                }
+            }
+
+        }else{
+
+            if(activeEvent){
+
+                const duration =
+                Math.round(
+                    (activeEvent.end
+                    -
+                    activeEvent.start)
+                    /60000
+                );
+
+                if(duration >= 2){
+
+                    events.push({
+
+                        start:activeEvent.start,
+
+                        end:activeEvent.end,
+
+                        minPF:
+                        activeEvent.minPF.toFixed(2),
+
+                        kw:
+                        activeEvent.kwAtMinPF.toFixed(2),
+
+                        duration:duration
+                    });
+                }
+
+                activeEvent = null;
+            }
+        }
+    });
+
+    return events;
+}
+
+// ========================
+// TABLE
+// ========================
+
+function renderEventTable(events){
+
+    const tbody =
+    document.getElementById("eventsTableBody");
+
+    tbody.innerHTML = "";
+
+    events.forEach(ev=>{
+
+        tbody.innerHTML += `
+
+        <tr>
+
+            <td>
+            ${
+            new Date(ev.start)
+            .toLocaleString("en-IN")
+            }
+            </td>
+
+            <td>
+            ${
+            new Date(ev.end)
+            .toLocaleString("en-IN")
+            }
+            </td>
+
+            <td>${ev.minPF}</td>
+
+            <td>${ev.kw}</td>
+
+            <td>${ev.duration}</td>
+
+        </tr>
+        `;
+    });
+}
+
+// ========================
+// MAIN
+// ========================
 
 async function generateReport(){
 
     try{
 
-        document.getElementById("statusText").innerHTML = "Loading...";
+        const selectedDate =
+        document.getElementById("datePicker")
+        .value;
 
-        const selectedDate = new Date(datePicker.value);
+        const range =
+        getISTRange(selectedDate);
 
-        const startTs = selectedDate.getTime();
+        const raw =
+        await fetchTelemetry(
+            range.startTs,
+            range.endTs
+        );
 
-        const endTs = startTs + 86400000;
+        const rows =
+        parseTelemetry(raw);
 
-        const raw = await fetchTelemetry(startTs,endTs);
+        updateKPIs(rows);
 
-        const data = parseData(raw);
+        renderPFvsKW(rows);
 
-        if(!data.length){
+        const events =
+        generatePFEvents(rows);
 
-            document.getElementById("statusText").innerHTML = "No data found";
-
-            return;
-        }
-
-        /* KPI */
-
-        const avgPF =
-            data.reduce((a,b)=>a+b.pf,0)/data.length;
-
-        const minPF =
-            Math.min(...data.map(x=>x.pf));
-
-        const lowPFCount =
-            data.filter(x=>x.pf < 0.90).length;
-
-        const lowPFDuration =
-            lowPFCount;
-
-        const penalty =
-            (lowPFDuration * 12).toFixed(0);
-
-        document.getElementById("avgPF").innerHTML =
-            avgPF.toFixed(3);
-
-        document.getElementById("minPF").innerHTML =
-            minPF.toFixed(3);
-
-        document.getElementById("lowPFDuration").innerHTML =
-            lowPFDuration;
-
-        document.getElementById("penalty").innerHTML =
-            penalty;
-
-        /* CHART */
-
-        pfChart.data.labels =
-            data.map(x=>{
-
-                const d = new Date(x.ts);
-
-                return d.toLocaleTimeString();
-            });
-
-        pfChart.data.datasets[0].data =
-            data.map(x=>x.pf);
-
-        pfChart.data.datasets[1].data =
-            data.map(x=>x.kw);
-
-        pfChart.update();
-
-        /* TABLE */
-
-        let html = "";
-
-        data.forEach(x=>{
-
-            const status =
-                x.pf < 0.90
-                ? '<span class="low">LOW PF</span>'
-                : '<span class="normal">NORMAL</span>';
-
-            html += `
-            <tr>
-                <td>${new Date(x.ts).toLocaleString()}</td>
-                <td>${x.pf.toFixed(3)}</td>
-                <td>${x.kw.toFixed(2)}</td>
-                <td>${status}</td>
-            </tr>
-            `;
-        });
-
-        document.getElementById("eventTable").innerHTML = html;
-
-        document.getElementById("statusText").innerHTML =
-            `${data.length} samples loaded`;
+        renderEventTable(events);
 
     }catch(err){
 
         console.error(err);
 
-        document.getElementById("statusText").innerHTML =
-            "Error loading data";
+        alert("Error loading telemetry");
     }
 }
 
-/* ============================
-   AUTO LOAD
-============================ */
+// ========================
+// BUTTON
+// ========================
+
+document
+.getElementById("analyzeBtn")
+.addEventListener(
+    "click",
+    generateReport
+);
+
+// ========================
+// AUTO LOAD
+// ========================
 
 generateReport();
 

@@ -28,12 +28,14 @@
       color:#333
     }
 
-    .page{
-      padding:2rem
-    }
+.page{
+  padding:0;
+  width:100%;
+  height:100%;
+}
 
     .filter-row{
-      width:95%;
+      width:100%;
       margin:1rem auto;
       display:flex;
       flex-wrap:wrap;
@@ -98,17 +100,18 @@
       color:#555
     }
 
-    .report-box{
-      width:95%;
-      margin:1rem auto;
-      padding:1rem;
-      background:#fff;
-      border-radius:10px;
-      box-shadow:0 4px 14px rgba(0,0,0,.08);
-    }
+.report-box{
+  width:100%;
+  height:100%;
+  margin:0;
+  padding:0;
+  background:#fff;
+  border-radius:0;
+  box-shadow:none;
+}
 
     .summary-row{
-      width:95%;
+      width:100%;
       margin:1rem auto 0;
       display:grid;
       grid-template-columns:repeat(4,1fr);
@@ -142,7 +145,7 @@
     }
 
     .panel{
-      width:95%;
+      width:100%;
       margin:1rem auto;
       background:#fff;
       border-radius:10px;
@@ -185,15 +188,6 @@
 
     tbody tr:nth-child(even){
       background:#fafafa
-    }
-
-    .footer{
-      width:95%;
-      margin:1rem auto 0;
-      display:grid;
-      grid-template-columns:minmax(0,2fr) minmax(260px,1fr);
-      gap:1rem;
-      align-items:start;
     }
 
     .remarks textarea{

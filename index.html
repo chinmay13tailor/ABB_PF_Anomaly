@@ -1001,7 +1001,8 @@ const end   = new Date(dateStr + "T23:59:59+05:30");
       
       };
 
-    }).filter(Boolean);
+    }).filter(Boolean)
+    .sort((a,b)=>a.ts-b.ts);
 
     smoothPF(rows, 5);
 

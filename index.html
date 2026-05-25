@@ -520,7 +520,13 @@ window.addEventListener('error', e=>{
 });
 
 function fmtTs(t){
-  return new Date(t).toLocaleString();
+
+  return new Date(t).toLocaleString(
+    "en-IN",
+    {
+      timeZone: "Asia/Kolkata"
+    }
+  );
 }
 
 function isF(v){
@@ -575,53 +581,67 @@ function detectLowPFEvents(rows, thr){
 
   const events = [];
 
-  let cur = null;
+  let currentEvent = null;
 
-  for (let i = 0; i < rows.length; i++) {
+  for(let i = 0; i < rows.length; i++){
 
-    const r = rows[i];
+    const row = rows[i];
 
-    const low = isF(r.PF) && r.PF < thr;
+    const pf = row.PF;
 
-    if (low && !cur) {
+    const isLow = Number.isFinite(pf) && pf < thr;
 
-      cur = {
-        startTs: r.ts,
-        minPF: r.PF,
-        at: r.ts,
-        kW: r.kW
+    // START EVENT
+    if(isLow && !currentEvent){
+
+      currentEvent = {
+
+        startTs : row.ts,
+        endTs   : row.ts,
+
+        minPF   : pf,
+
+        kW      : row.kW
+
       };
     }
 
-    if (low && cur && r.PF < cur.minPF) {
+    // CONTINUE EVENT
+    if(isLow && currentEvent){
 
-      cur.minPF = r.PF;
-      cur.at = r.ts;
-      cur.kW = r.kW;
+      currentEvent.endTs = row.ts;
+
+      if(pf < currentEvent.minPF){
+
+        currentEvent.minPF = pf;
+
+        currentEvent.kW = row.kW;
+      }
     }
 
-    if (!low && cur) {
+    // CLOSE EVENT
+    if(!isLow && currentEvent){
 
-      cur.endTs = rows[i - 1]?.ts ?? r.ts;
+      events.push(currentEvent);
 
-      events.push(cur);
-
-      cur = null;
+      currentEvent = null;
     }
   }
 
-  if (cur) {
+  // LAST EVENT
+  if(currentEvent){
 
-    cur.endTs = rows.at(-1)?.ts ?? cur.startTs;
-
-    events.push(cur);
+    events.push(currentEvent);
   }
 
-  events.forEach(e => {
+  // DURATION
+  events.forEach(e=>{
 
     e.durationMin = Math.max(
       1,
-      Math.round((e.endTs - e.startTs) / 60000)
+      Math.round(
+        (e.endTs - e.startTs) / 60000
+      )
     );
 
   });
@@ -933,9 +953,9 @@ async function generate(){
   document.getElementById("deviceShown").textContent =
     DEVICE_ID;
 
-  const start = new Date(dateStr+"T00:00:00");
+const start = new Date(dateStr + "T00:00:00+05:30");
 
-  const end   = new Date(dateStr+"T23:59:59");
+const end   = new Date(dateStr + "T23:59:59+05:30");
 
   try{
 

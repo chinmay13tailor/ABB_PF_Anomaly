@@ -1,634 +1,1159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>PF Analysis</title>
+  <meta charset="UTF-8" />
+  <title>Low Power Factor Analysis Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 
-<style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer"></script>
 
-body{
-    font-family: Arial;
-    background:#f5f7fb;
-    margin:0;
-    padding:20px;
-    color:#222;
-}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer"></script>
 
-.topbar{
-    background:white;
-    padding:15px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    gap:15px;
-    margin-bottom:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.05);
-}
+  <style>
 
-input{
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #ccc;
-}
+    *{
+      box-sizing:border-box
+    }
 
-button{
-    background:#0d47a1;
-    color:white;
-    border:none;
-    padding:10px 18px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:bold;
-}
+    body{
+      font-family:'Segoe UI',sans-serif;
+      background:#EEEEEE;
+      margin:0;
+      color:#333
+    }
 
-.kpi-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:16px;
-    margin-bottom:20px;
-}
+    .page{
+      padding:2rem
+    }
 
-.kpi-card{
-    background:white;
-    border-radius:14px;
-    padding:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.05);
-    position:relative;
-}
+    .filter-row{
+      width:95%;
+      margin:1rem auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:1rem;
+      align-items:flex-end;
+      background:#fff;
+      padding:1rem;
+      border-radius:10px;
+      box-shadow:0 4px 10px rgba(0,0,0,.08);
 
-.kpi-card.green{
-    border-left:5px solid #00c853;
-}
+      position:sticky;
+      top:0;
+      z-index:1000;
+    }
 
-.kpi-card.orange{
-    border-left:5px solid #ff9800;
-}
+    label{
+      font-weight:600;
+      display:block;
+      margin:0 0 .35rem
+    }
 
-.kpi-card.blue{
-    border-left:5px solid #2962ff;
-}
+    input,button{
+      padding:.55rem .8rem;
+      font-size:1rem;
+      border:1px solid #d0d7de;
+      border-radius:6px;
+      background:#fff
+    }
 
-.kpi-card.red{
-    border-left:5px solid #ff5252;
-}
+    button.primary{
+      background:#1363df;
+      color:#fff;
+      border:0;
+      font-weight:700;
+      cursor:pointer
+    }
 
-.kpi-title{
-    font-size:12px;
-    letter-spacing:2px;
-    color:#8c99b2;
-    font-weight:700;
-    margin-bottom:20px;
-}
+    button.primary:hover{
+      background:#0e4fb1
+    }
 
-.kpi-value{
-    font-size:42px;
-    font-weight:800;
-    color:#0b1736;
-}
+    .status{
+      margin-left:.5rem;
+      color:#6a737d
+    }
 
-.kpi-sub{
-    margin-top:12px;
-    color:#8c99b2;
-    font-size:13px;
-}
+    .header{
+      display:none;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:1rem;
+      border-bottom:1px solid #e5e7eb;
+      padding-bottom:1rem
+    }
 
-.chart-card{
-    background:white;
-    border-radius:14px;
-    padding:20px;
-    margin-bottom:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.05);
-}
+    .company{
+      font-weight:700;
+      font-size:1.1rem
+    }
 
-.chart-title{
-    font-size:28px;
-    font-weight:700;
-    margin-bottom:15px;
-}
+    .meta{
+      color:#555
+    }
 
-.table-card{
-    background:white;
-    border-radius:14px;
-    padding:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.05);
-}
+    .report-box{
+      width:95%;
+      margin:1rem auto;
+      padding:1rem;
+      background:#fff;
+      border-radius:10px;
+      box-shadow:0 4px 14px rgba(0,0,0,.08);
+    }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-}
+    .summary-row{
+      width:95%;
+      margin:1rem auto 0;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:1rem
+    }
 
-th{
-    background:#ffd600;
-    padding:14px;
-    text-align:center;
-}
+    .kpi{
+      background:#fff;
+      border-radius:10px;
+      padding:1rem 1.25rem;
+      box-shadow:0 4px 10px rgba(0,0,0,.08)
+    }
 
-td{
-    padding:14px;
-    text-align:center;
-    border-bottom:1px solid #eee;
-}
+    .kpi .title{
+      color:#666;
+      font-size:.9rem
+    }
 
-</style>
+    .kpi .value{
+      font-size:2rem;
+      font-weight:800
+    }
+
+    .kpi .sub{
+      color:#666;
+      margin-top:.25rem
+    }
+
+    .kpi.danger{
+      background:#ffe0dd
+    }
+
+    .panel{
+      width:95%;
+      margin:1rem auto;
+      background:#fff;
+      border-radius:10px;
+      box-shadow:0 4px 14px rgba(0,0,0,.08);
+      padding:1rem
+    }
+
+    .panel h3{
+      margin:.2rem 0 1rem
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:0.9rem
+    }
+
+    .table-wrap{
+      overflow:auto
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#fff;
+      table-layout:fixed
+    }
+
+    th,td{
+      padding:.8rem 1rem;
+      border-bottom:1px solid #eee;
+      text-align:center;
+      white-space:normal
+    }
+
+    thead th{
+      background:#ffd700;
+      color:#222
+    }
+
+    tbody tr:nth-child(even){
+      background:#fafafa
+    }
+
+    .footer{
+      width:95%;
+      margin:1rem auto 0;
+      display:grid;
+      grid-template-columns:minmax(0,2fr) minmax(260px,1fr);
+      gap:1rem;
+      align-items:start;
+    }
+
+    .remarks textarea{
+      width:100%;
+      min-height:130px;
+      resize:vertical;
+      border:1px solid #d0d7de;
+      border-radius:8px;
+      padding:.6rem;
+      background:#fff;
+    }
+
+    .sign{
+      display:flex;
+      flex-direction:column;
+      gap:20px
+    }
+
+    .sign .line{
+      width:100%;
+      height:0;
+      border-bottom:2px solid #333;
+      margin-top:10px
+    }
+
+    @media (max-width:980px){
+
+      .summary-row{
+        grid-template-columns:1fr 1fr
+      }
+
+      .footer{
+        grid-template-columns:1fr
+      }
+    }
+
+    body.pdf .header{
+      display:flex !important;
+    }
+
+    body.pdf .pdf-page{
+      width:294mm;
+      background:#fff;
+      margin:0 auto;
+      padding:2mm 3mm;
+    }
+
+    body.pdf .panel{
+      padding:8px 10px;
+      margin:8px auto;
+      width:99%;
+    }
+
+    body.pdf .summary-row{
+      width:99%;
+      gap:.6rem;
+    }
+
+    body.pdf .footer{
+      width:99%;
+      gap:.6rem;
+    }
+
+  </style>
 </head>
 
 <body>
 
-<div class="topbar">
+<div class="page" id="pageRoot">
 
-    <input type="date" id="datePicker">
+  <div class="filter-row">
 
-    <button id="analyzeBtn">
-        Analyze
-    </button>
-
-</div>
-
-<div class="kpi-grid">
-
-    <div class="kpi-card green">
-        <div class="kpi-title">AVERAGE PF</div>
-        <div class="kpi-value" id="avgPF">--</div>
-        <div class="kpi-sub">Average from telemetry</div>
+    <div>
+      <label for="dateInput">Select Date</label>
+      <input type="date" id="dateInput"/>
     </div>
 
-    <div class="kpi-card orange">
-        <div class="kpi-title">MINIMUM PF</div>
-        <div class="kpi-value" id="minPF">--</div>
-        <div class="kpi-sub">Lowest PF detected</div>
+    <div>
+      <button id="btnGenerate" class="primary">Generate</button>
+      <span class="status" id="status">Idle</span>
     </div>
 
-    <div class="kpi-card blue">
-        <div class="kpi-title">LOW PF DURATION</div>
-        <div class="kpi-value">
-            <span id="lowPFDuration">--</span> Min
+    <div style="margin-left:auto">
+      <button id="btnExport" class="primary">
+        Export PDF
+      </button>
+    </div>
+
+  </div>
+
+  <div class="report-box">
+
+    <div id="printArea">
+
+      <!-- PAGE 1 -->
+
+      <section class="pdf-page" id="pdfPage1">
+
+        <div class="header">
+
+          <div>
+            <div class="company" id="companyName">
+              Pima Controls Pvt Ltd
+            </div>
+
+            <div id="companyAddress">
+              Ahmedabad, India
+            </div>
+          </div>
+
+          <div class="meta">
+
+            <div>
+              <b>Report:</b>
+              Low Power Factor Analysis Report
+            </div>
+
+            <div>
+              <b>Report Date:</b>
+              <span id="reportDateLabel">—</span>
+            </div>
+
+            <div>
+              <b>Generated:</b>
+              <span id="generatedAt">—</span>
+            </div>
+
+            <div>
+              <b>Device:</b>
+              <span id="deviceShown">—</span>
+            </div>
+
+          </div>
+
         </div>
-        <div class="kpi-sub">PF below 0.90</div>
-    </div>
 
-    <div class="kpi-card red">
-        <div class="kpi-title">ESTIMATED PENALTY</div>
-        <div class="kpi-value">
-            ₹ <span id="estimatedPenalty">--</span>
+        <div class="summary-row">
+
+          <div class="kpi">
+            <div class="title">Avg PF (window)</div>
+            <div class="value" id="kpiAvgPF">—</div>
+          </div>
+
+          <div class="kpi">
+            <div class="title">Min PF</div>
+            <div class="value" id="kpiMinPF">—</div>
+            <div class="sub" id="kpiMinPFTs">—</div>
+          </div>
+
+          <div class="kpi">
+            <div class="title">Duration PF &lt; 0.90</div>
+            <div class="value" id="kpiDurationLowPF">—</div>
+          </div>
+
+          <div class="kpi danger">
+            <div class="title">Estimated penalty (₹)</div>
+            <div class="value" id="kpiPenalty">—</div>
+          </div>
+
         </div>
-        <div class="kpi-sub">Estimated</div>
+
+        <div class="panel">
+
+          <h3>PF Trend with Active Power</h3>
+
+          <div id="pfTrend" style="height:360px;"></div>
+
+        </div>
+
+      </section>
+
+      <!-- PAGE 2 -->
+
+      <section class="pdf-page" id="pdfPage2">
+
+        <div class="grid2">
+
+          <div class="panel">
+
+            <h3>PF vs kW</h3>
+
+            <div id="pfScatter" style="height:340px;"></div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- PAGE 3 -->
+
+      <section class="pdf-page" id="pdfPage3">
+
+        <div class="panel">
+
+          <h3>Events Table (PF &lt; 0.90)</h3>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Min PF</th>
+                  <th>kW@minPF</th>
+                  <th>Duration (min)</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="eventsBody">
+
+                <tr>
+                  <td colspan="5">Click Generate</td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+        <div class="footer">
+
+          <div class="remarks">
+
+            <div>
+              <b>Remarks</b>
+            </div>
+
+            <textarea placeholder="Engineer notes..."></textarea>
+
+          </div>
+
+          <div class="sign">
+
+            <div>
+              Reviewed by
+              <div class="line"></div>
+            </div>
+
+            <div>
+              Checked by
+              <div class="line"></div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
     </div>
 
-</div>
-
-<div class="chart-card">
-
-    <div class="chart-title">
-        PF vs kW
-    </div>
-
-    <canvas id="pfVsKwChart"></canvas>
-
-</div>
-
-<div class="table-card">
-
-    <div class="chart-title">
-        Events Table (PF &lt; 0.90)
-    </div>
-
-    <table>
-
-        <thead>
-
-            <tr>
-                <th>Start</th>
-                <th>End</th>
-                <th>Min PF</th>
-                <th>kW@minPF</th>
-                <th>Duration (min)</th>
-            </tr>
-
-        </thead>
-
-        <tbody id="eventsTableBody">
-
-        </tbody>
-
-    </table>
+  </div>
 
 </div>
 
 <script>
 
-// ========================
-// CONFIG
-// ========================
+const CONFIG = {
 
-const DEVICE_ID =
-"1250b550-5bdb-11f0-9b14-15d3b3a473c1";
+  COMPANY_NAME: "Pima Controls Pvt Ltd",
 
-const JWT =
-new URLSearchParams(window.location.search)
-.get("token");
+  COMPANY_ADDRESS: "Ahmedabad, India",
 
-// ========================
-// DEFAULT DATE
-// ========================
+  API_BASE_URL: "https://plantwiz.pimateck.in/api",
+
+  PF_TARGET: 0.95,
+
+  LOW_PF_THRESHOLD: 0.90,
+
+  DEMAND_RATE_INR_PER_KVA: 350,
+
+  DEFAULT_DEVICE_ID: "1250b550-5bdb-11f0-9b14-15d3b3a473c1",
+
+  KEYS: ["chiller_plant_1"]
+
+};
+
+const qs = new URLSearchParams(location.search);
+
+const JWT = qs.get("token") || "";
+
+const URL_DEVICE = qs.get("deviceId") || "";
+
+const DEVICE_ID = URL_DEVICE || CONFIG.DEFAULT_DEVICE_ID;
+
+document.getElementById("companyName").textContent = CONFIG.COMPANY_NAME;
+
+document.getElementById("companyAddress").textContent = CONFIG.COMPANY_ADDRESS;
+
+document.getElementById("deviceShown").textContent = DEVICE_ID;
 
 const today = new Date();
 
-const yyyy = today.getFullYear();
+const pad = n => String(n).padStart(2,"0");
 
-const mm =
-String(today.getMonth()+1).padStart(2,'0');
+const defDate = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
 
-const dd =
-String(today.getDate()).padStart(2,'0');
+document.getElementById("dateInput").value = defDate;
 
-document.getElementById("datePicker").value =
-`${yyyy}-${mm}-${dd}`;
+document.getElementById("reportDateLabel").textContent = defDate;
 
-// ========================
-// IST RANGE
-// ========================
+document.getElementById("generatedAt").textContent = new Date().toLocaleString();
 
-function getISTRange(selectedDate){
+document.getElementById("btnGenerate").addEventListener("click", generate);
 
-    const start =
-    new Date(selectedDate + "T00:00:00+05:30");
+document.getElementById("btnExport").addEventListener("click", exportPDF);
 
-    const end =
-    new Date(selectedDate + "T23:59:59+05:30");
+window.addEventListener('error', e=>{
 
-    return {
+  const s=document.getElementById('status');
 
-        startTs:start.getTime(),
+  if(s){
+    s.textContent = 'Error: ' + (e?.message || 'Script error');
+  }
 
-        endTs:end.getTime()
-    };
+});
+
+function fmtTs(t){
+  return new Date(t).toLocaleString();
 }
 
-// ========================
-// FETCH TELEMETRY
-// ========================
+function isF(v){
+  return Number.isFinite(v);
+}
 
-async function fetchTelemetry(startTs,endTs){
+async function fetchTS(deviceId, keysCsv, startTs, endTs){
 
-    const url =
-    "https://plantwiz.pimateck.in/api/plugins/telemetry/DEVICE/"
-    + DEVICE_ID
-    + "/values/timeseries"
-    + "?keys=chiller_plant_1"
-    + "&startTs=" + startTs
-    + "&endTs=" + endTs
-    + "&limit=50000"
-    + "&agg=NONE";
+  const url =
+    `${CONFIG.API_BASE_URL}/plugins/telemetry/DEVICE/${deviceId}/values/timeseries` +
+    `?keys=${encodeURIComponent(keysCsv)}&startTs=${startTs}&endTs=${endTs}&limit=50000&agg=NONE`;
 
-    const response = await fetch(url,{
+  const headers = JWT
+    ? { "X-Authorization": `Bearer ${JWT}` }
+    : {};
 
-        method:"GET",
+  const res = await fetch(url, { headers });
 
-        headers:{
-            "Content-Type":"application/json",
-            "X-Authorization":"Bearer " + JWT
-        }
-    });
+  if (!res.ok){
+    throw new Error(`${res.status} ${res.statusText}`);
+  }
 
-    if(!response.ok){
+  return res.json();
+}
 
-        throw new Error(await response.text());
+function smoothPF(rows, n=5){
+
+  const q=[];
+
+  let sum=0;
+
+  for (let i=0;i<rows.length;i++){
+
+    const v = rows[i].PF;
+
+    if (isF(v)){
+
+      q.push(v);
+
+      sum+=v;
+
+      if(q.length>n){
+        sum-=q.shift();
+      }
+
+      rows[i].PF = sum/q.length;
+    }
+  }
+}
+
+function detectLowPFEvents(rows, thr){
+
+  const events = [];
+
+  let cur = null;
+
+  for (let i = 0; i < rows.length; i++) {
+
+    const r = rows[i];
+
+    const low = isF(r.PF) && r.PF < thr;
+
+    if (low && !cur) {
+
+      cur = {
+        startTs: r.ts,
+        minPF: r.PF,
+        at: r.ts,
+        kW: r.kW
+      };
     }
 
-    return await response.json();
-}
+    if (low && cur && r.PF < cur.minPF) {
 
-// ========================
-// PARSE
-// ========================
-
-function parseTelemetry(data){
-
-    if(!data.chiller_plant_1){
-        return [];
+      cur.minPF = r.PF;
+      cur.at = r.ts;
+      cur.kW = r.kW;
     }
 
-    return data.chiller_plant_1.map(item=>{
+    if (!low && cur) {
 
-        const parsed = JSON.parse(item.value);
+      cur.endTs = rows[i - 1]?.ts ?? r.ts;
 
-        return{
+      events.push(cur);
 
-            ts:item.ts,
+      cur = null;
+    }
+  }
 
-            pf:
-            parseFloat(parsed["18_Avg_PF"]) || 0,
+  if (cur) {
 
-            kw:
-            parseFloat(parsed["18_Act_Power_Total"]) || 0,
+    cur.endTs = rows.at(-1)?.ts ?? cur.startTs;
 
-            kwh:
-            parseFloat(parsed["18_Act_Energy_Total"]) || 0
-        };
-    });
+    events.push(cur);
+  }
+
+  events.forEach(e => {
+
+    e.durationMin = Math.max(
+      1,
+      Math.round((e.endTs - e.startTs) / 60000)
+    );
+
+  });
+
+  return events;
 }
 
-// ========================
-// KPI
-// ========================
+function estimatePenalty(rows){
 
-function updateKPIs(rows){
+  let penalty = 0;
 
-    if(!rows.length) return;
+  for (let i=1;i<rows.length;i++){
 
-    const pfValues =
-    rows.map(r=>r.pf);
+    const a=rows[i-1];
 
-    const avgPF =
-    pfValues.reduce((a,b)=>a+b,0)
-    / pfValues.length;
+    const b=rows[i];
 
-    const minPF =
-    Math.min(...pfValues);
+    const dtDay = (b.ts - a.ts) / (24*3600*1000);
 
-    let lowPFMinutes = 0;
+    const PF = b.PF ?? a.PF;
 
-    rows.forEach(r=>{
+    const kW = isF(b.kW)
+      ? b.kW
+      : (isF(a.kW) ? a.kW : 0);
 
-        if(r.pf < 0.90){
+    if (isF(PF) && PF < CONFIG.LOW_PF_THRESHOLD && isF(kW)){
 
-            lowPFMinutes++;
-        }
-    });
+      const delta = Math.max(
+        0,
+        (1/PF) - (1/CONFIG.PF_TARGET)
+      );
 
-    const estimatedPenalty =
-    lowPFMinutes * 2;
+      penalty +=
+        kW *
+        delta *
+        CONFIG.DEMAND_RATE_INR_PER_KVA *
+        dtDay;
+    }
+  }
 
-    document.getElementById("avgPF")
-    .innerText = avgPF.toFixed(2);
-
-    document.getElementById("minPF")
-    .innerText = minPF.toFixed(2);
-
-    document.getElementById("lowPFDuration")
-    .innerText = lowPFMinutes;
-
-    document.getElementById("estimatedPenalty")
-    .innerText =
-    estimatedPenalty.toFixed(0);
+  return Math.round(penalty);
 }
 
-// ========================
-// CHART
-// ========================
+function renderKPIs(rows, events){
 
-function renderPFvsKW(rows){
+  const pfs = rows
+    .map(r=>r.PF)
+    .filter(isF);
 
-    const ctx =
-    document.getElementById("pfVsKwChart");
+  const avg = pfs.length
+    ? pfs.reduce((s,x)=>s+x,0)/pfs.length
+    : NaN;
 
-    if(window.chartObj){
+  const minPF = pfs.length
+    ? Math.min(...pfs)
+    : NaN;
 
-        window.chartObj.destroy();
+  const minIdx = pfs.length
+    ? pfs.indexOf(minPF)
+    : -1;
+
+  const minTs  = minIdx>=0
+    ? rows[minIdx].ts
+    : null;
+
+  const lowDur = events.reduce(
+    (s,e)=>s+e.durationMin,
+    0
+  );
+
+  const penalty = estimatePenalty(rows);
+
+  document.getElementById("kpiAvgPF").textContent =
+    isF(avg)
+      ? avg.toFixed(2)
+      : "—";
+
+  document.getElementById("kpiMinPF").textContent =
+    isF(minPF)
+      ? minPF.toFixed(2)
+      : "—";
+
+  document.getElementById("kpiMinPFTs").textContent =
+    minTs
+      ? fmtTs(minTs)
+      : "—";
+
+  document.getElementById("kpiDurationLowPF").textContent =
+    `${lowDur} min`;
+
+  document.getElementById("kpiPenalty").textContent =
+    penalty.toLocaleString();
+}
+
+function renderPFTrend(rows){
+
+  const el = document.getElementById("pfTrend");
+
+  if (!rows.length){
+
+    el.innerHTML =
+      '<div style="text-align:center;padding:2rem;color:#666">No data</div>';
+
+    return;
+  }
+
+  const t  = rows.map(r => new Date(r.ts));
+
+  const pf = rows.map(r => r.PF);
+
+  const kw = rows.map(r => r.kW);
+
+  Plotly.newPlot("pfTrend", [
+
+    {
+      x: t,
+      y: pf,
+      name: "Power Factor",
+      mode: "lines",
+      line: { width: 2 }
+    },
+
+    {
+      x: t,
+      y: kw,
+      name: "Active Power (kW)",
+      mode: "lines",
+      yaxis: "y2"
     }
 
-    const points =
-    rows.map(r=>({
+  ], {
 
-        x:r.kw,
-        y:r.pf
-    }));
+    margin: {
+      l: 50,
+      r: 60,
+      t: 10,
+      b: 30
+    },
 
-    window.chartObj =
-    new Chart(ctx,{
+    yaxis: {
+      title: "PF",
+      range: [0, 1.5]
+    },
 
-        type:"scatter",
+    yaxis2: {
+      title: "kW",
+      overlaying: "y",
+      side: "right"
+    },
 
-        data:{
+    shapes: [
 
-            datasets:[{
-
-                label:"PF vs kW",
-
-                data:points,
-
-                backgroundColor:"#1976d2",
-
-                pointRadius:3
-            }]
-        },
-
-        options:{
-
-            responsive:true,
-
-            plugins:{
-
-                legend:{
-                    display:false
-                }
-            },
-
-            scales:{
-
-                x:{
-                    title:{
-                        display:true,
-                        text:"kW"
-                    }
-                },
-
-                y:{
-                    title:{
-                        display:true,
-                        text:"PF"
-                    },
-                    min:0,
-                    max:1.5
-                }
-            }
+      {
+        type: "line",
+        x0: t[0],
+        x1: t.at(-1),
+        y0: 0.95,
+        y1: 0.95,
+        line: {
+          dash: "dot",
+          color: "#f1c40f"
         }
-    });
-}
+      },
 
-// ========================
-// EVENTS
-// ========================
-
-function generatePFEvents(rows){
-
-    const events = [];
-
-    let activeEvent = null;
-
-    rows.forEach(row=>{
-
-        const pf = row.pf;
-        const kw = row.kw;
-        const ts = row.ts;
-
-        if(pf < 0.90){
-
-            if(!activeEvent){
-
-                activeEvent = {
-
-                    start:ts,
-
-                    end:ts,
-
-                    minPF:pf,
-
-                    kwAtMinPF:kw
-                };
-
-            }else{
-
-                activeEvent.end = ts;
-
-                if(pf < activeEvent.minPF){
-
-                    activeEvent.minPF = pf;
-
-                    activeEvent.kwAtMinPF = kw;
-                }
-            }
-
-        }else{
-
-            if(activeEvent){
-
-                const duration =
-                Math.round(
-                    (activeEvent.end
-                    -
-                    activeEvent.start)
-                    /60000
-                );
-
-                if(duration >= 2){
-
-                    events.push({
-
-                        start:activeEvent.start,
-
-                        end:activeEvent.end,
-
-                        minPF:
-                        activeEvent.minPF.toFixed(2),
-
-                        kw:
-                        activeEvent.kwAtMinPF.toFixed(2),
-
-                        duration:duration
-                    });
-                }
-
-                activeEvent = null;
-            }
+      {
+        type: "line",
+        x0: t[0],
+        x1: t.at(-1),
+        y0: 0.90,
+        y1: 0.90,
+        line: {
+          dash: "dot",
+          color: "#e74c3c"
         }
-    });
+      }
 
-    return events;
+    ],
+
+    legend: {
+      orientation: "h"
+    }
+
+  }, {
+    displaylogo: false,
+    responsive: true
+  });
 }
 
-// ========================
-// TABLE
-// ========================
+function renderScatter(rows){
 
-function renderEventTable(events){
+  const el = document.getElementById("pfScatter");
 
-    const tbody =
-    document.getElementById("eventsTableBody");
+  if (!rows.length){
 
-    tbody.innerHTML = "";
+    el.innerHTML =
+      '<div style="text-align:center;padding:2rem;color:#666">No data</div>';
 
-    events.forEach(ev=>{
+    return;
+  }
 
-        tbody.innerHTML += `
+  const x = rows.map(r=>r.kW);
 
-        <tr>
+  const y = rows.map(r=>r.PF);
 
-            <td>
-            ${
-            new Date(ev.start)
-            .toLocaleString("en-IN")
-            }
-            </td>
+  Plotly.newPlot("pfScatter",
 
-            <td>
-            ${
-            new Date(ev.end)
-            .toLocaleString("en-IN")
-            }
-            </td>
+    [
+      {
+        x,
+        y,
+        mode:"markers",
+        name:"PF vs kW"
+      }
+    ],
 
-            <td>${ev.minPF}</td>
+    {
+      margin:{
+        l:40,
+        r:10,
+        t:10,
+        b:40
+      },
 
-            <td>${ev.kw}</td>
+      xaxis:{
+        title:"kW"
+      },
 
-            <td>${ev.duration}</td>
+      yaxis:{
+        title:"PF",
+        range:[0,1.5]
+      }
 
-        </tr>
-        `;
-    });
+    },
+
+    {
+      displaylogo:false,
+      responsive:true
+    }
+
+  );
 }
 
-// ========================
-// MAIN
-// ========================
+function renderEvents(events){
 
-async function generateReport(){
+  const tb = document.getElementById("eventsBody");
+
+  tb.innerHTML = "";
+
+  if (!events.length){
+
+    tb.innerHTML =
+      '<tr><td colspan="5">No low PF events</td></tr>';
+
+    return;
+  }
+
+  events.forEach(e=>{
+
+    const tr = document.createElement("tr");
+
+    [
+
+      fmtTs(e.startTs),
+
+      fmtTs(e.endTs),
+
+      e.minPF.toFixed(2),
+
+      (e.kW ?? 0).toFixed(0),
+
+      e.durationMin
+
+    ].forEach(v=>{
+
+      const td = document.createElement("td");
+
+      td.textContent = v;
+
+      tr.appendChild(td);
+
+    });
+
+    tb.appendChild(tr);
+
+  });
+}
+
+async function generate(){
+
+  const dateStr =
+    document.getElementById("dateInput").value;
+
+  if (!JWT){
+
+    alert("Missing token in URL (?token=)");
+
+    return;
+  }
+
+  document.getElementById("status").textContent =
+    "Fetching…";
+
+  document.getElementById("reportDateLabel").textContent =
+    dateStr;
+
+  document.getElementById("generatedAt").textContent =
+    new Date().toLocaleString();
+
+  document.getElementById("deviceShown").textContent =
+    DEVICE_ID;
+
+  const start = new Date(dateStr+"T00:00:00");
+
+  const end   = new Date(dateStr+"T23:59:59");
+
+  try{
+
+    const json = await fetchTS(
+      DEVICE_ID,
+      CONFIG.KEYS.join(","),
+      start.getTime(),
+      end.getTime()
+    );
+
+    const raw = json["chiller_plant_1"] || [];
+
+    const rows = raw.map(item => {
+
+      let parsed = {};
+
+      try {
+
+        parsed = JSON.parse(item.value);
+
+      } catch(e) {
+
+        return null;
+      }
+
+      const pf = Number(parsed["18_Avg_PF"]);
+
+      const kW = Number(parsed["18_Act_Power_Total"]);
+
+      return {
+
+        ts: item.ts,
+
+        PF: Number.isFinite(pf)
+          ? pf
+          : NaN,
+
+        kW: Number.isFinite(kW)
+          ? kW
+          : NaN
+
+      };
+
+    }).filter(Boolean);
+
+    smoothPF(rows, 5);
+
+    const events = detectLowPFEvents(
+      rows,
+      CONFIG.LOW_PF_THRESHOLD
+    );
+
+    renderKPIs(rows, events);
+
+    renderPFTrend(rows);
+
+    renderScatter(rows);
+
+    renderEvents(events);
+
+    document.getElementById("status").textContent =
+      "Done";
+
+  }catch(err){
+
+    console.error(err);
+
+    document.getElementById("status").textContent =
+      "Error";
+
+    alert(
+      "Failed to fetch/build report.\n" +
+      err.message
+    );
+  }
+}
+
+function resizePlots(){
+
+  ['pfTrend','pfScatter'].forEach(id=>{
+
+    const el=document.getElementById(id);
 
     try{
+      Plotly.Plots.resize(el);
+    }catch(e){}
 
-        const selectedDate =
-        document.getElementById("datePicker")
-        .value;
-
-        const range =
-        getISTRange(selectedDate);
-
-        const raw =
-        await fetchTelemetry(
-            range.startTs,
-            range.endTs
-        );
-
-        const rows =
-        parseTelemetry(raw);
-
-        updateKPIs(rows);
-
-        renderPFvsKW(rows);
-
-        const events =
-        generatePFEvents(rows);
-
-        renderEventTable(events);
-
-    }catch(err){
-
-        console.error(err);
-
-        alert("Error loading telemetry");
-    }
+  });
 }
 
-// ========================
-// BUTTON
-// ========================
+async function exportPDF(){
 
-document
-.getElementById("analyzeBtn")
-.addEventListener(
-    "click",
-    generateReport
-);
+  const jsPDFCtor =
+    (window.jspdf && window.jspdf.jsPDF)
+      ? window.jspdf.jsPDF
+      : window.jsPDF;
 
-// ========================
-// AUTO LOAD
-// ========================
+  if (!jsPDFCtor){
 
-generateReport();
+    alert(
+      'jsPDF failed to load. Check CDN connectivity.'
+    );
+
+    return;
+  }
+
+  const dateStr =
+    document.getElementById('reportDateLabel').textContent
+    || 'Report';
+
+  document.body.classList.add('pdf');
+
+  await new Promise(r=>setTimeout(r,120));
+
+  resizePlots();
+
+  await new Promise(r=>setTimeout(r,140));
+
+  const pdf = new jsPDFCtor({
+
+    orientation:'landscape',
+
+    unit:'mm',
+
+    format:'a4'
+
+  });
+
+  const margin = 0;
+
+  const pageW = pdf.internal.pageSize.getWidth();
+
+  const pageH = pdf.internal.pageSize.getHeight();
+
+  const addPage = async (node, first=false) => {
+
+    const canvas = await html2canvas(node, {
+
+      backgroundColor:'#ffffff',
+
+      scale:2,
+
+      useCORS:true,
+
+      scrollX:0,
+
+      scrollY:0,
+
+      windowWidth: node.scrollWidth,
+
+      windowHeight: node.scrollHeight
+
+    });
+
+    const img = canvas.toDataURL('image/jpeg', 0.98);
+
+    const props = pdf.getImageProperties(img);
+
+    let w = pageW - margin*2;
+
+    let h = (props.height * w) / props.width;
+
+    if (h > pageH - margin*2){
+
+      h = pageH - margin*2;
+
+      w = (props.width * h) / props.height;
+    }
+
+    const x = (pageW - w)/2;
+
+    const y = (pageH - h)/2;
+
+    if (!first){
+      pdf.addPage('a4','landscape');
+    }
+
+    pdf.addImage(
+      img,
+      'JPEG',
+      x,
+      y,
+      w,
+      h,
+      undefined,
+      'FAST'
+    );
+  };
+
+  await addPage(
+    document.getElementById('pdfPage1'),
+    true
+  );
+
+  await addPage(
+    document.getElementById('pdfPage2')
+  );
+
+  await addPage(
+    document.getElementById('pdfPage3')
+  );
+
+  pdf.save(`Low_PF_Report_${dateStr}.pdf`);
+
+  document.body.classList.remove('pdf');
+
+  await new Promise(r=>setTimeout(r,60));
+
+  resizePlots();
+}
+
+window.addEventListener("load", ()=>{
+
+  if (JWT){
+    generate();
+  }
+
+});
 
 </script>
 

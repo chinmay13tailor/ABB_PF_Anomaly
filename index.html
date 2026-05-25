@@ -966,17 +966,19 @@ async function generate(){
       const kW = Number(parsed["18_Act_Power_Total"]);
 
       return {
-
-        ts: item.ts,
-
+      
+        ts: parsed.timestamp
+              ? parsed.timestamp * 1000
+              : item.ts,
+      
         PF: Number.isFinite(pf)
-          ? pf
-          : NaN,
-
+              ? pf
+              : NaN,
+      
         kW: Number.isFinite(kW)
-          ? kW
-          : NaN
-
+              ? kW
+              : NaN
+      
       };
 
     }).filter(Boolean);
